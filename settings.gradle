@@ -1,0 +1,4 @@
+include ':app'
+rootProject.name = "SingleActuatorIT"
+include ':util'
+include ':audioVibDrive'

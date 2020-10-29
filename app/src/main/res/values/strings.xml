@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">SingleActuatorIT</string>
+
+    <string name="fr">Frequency</string>
+    <string name="amp">Amplitude</string>
+    <string name="pr">Period</string>
+    <string name="np">Number of Pulses</string>
+    <string name="highchord">High Chord</string>
+    <string name="veryhigh">Very High</string>
+    <string name="high">High</string>
+    <string name="mid">Mid</string>
+    <string name="low">Low</string>
+    <string name="lowchord">Low Chord</string>
+
+    <string name="fast">Fast</string>
+    <string name="moderate">Moderate</string>
+    <string name="slow">Slow</string>
+    <string name="veryslow">Very Slow</string>
+
+    <string name="strong">Strong</string>
+    <string name="weak">Weak</string>
+
+    <string name="exp1">Experiment 1</string>
+    <string name="exp2">Experiment 2</string>
+    <string name="famil">Familiarization</string>
+
+    <string name="confirm">Confirm</string>
+    <string name="calibration">Calibration</string>
+
+    <string name="prev">Previous</string>
+    <string name="next">Next</string>
+    <string name="pause">Pause</string>
+
+</resources>

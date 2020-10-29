@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Experiment2">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.346">
+
+        <TextView
+            android:id="@+id/frtextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/fr"
+            app:layout_constraintBottom_toTopOf="@+id/exp2_frRadioGroup"
+            app:layout_constraintEnd_toStartOf="@+id/amptextView"
+            app:layout_constraintStart_toEndOf="@+id/nptextView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/amptextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/amp"
+            app:layout_constraintBottom_toTopOf="@+id/exp2_ampRadioGroup"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/frtextView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/nptextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/np"
+            app:layout_constraintBottom_toTopOf="@+id/npRadioGroup"
+            app:layout_constraintEnd_toStartOf="@+id/frtextView"
+            app:layout_constraintStart_toEndOf="@+id/prtextView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/prtextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/pr"
+            app:layout_constraintEnd_toStartOf="@+id/nptextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RadioGroup
+            android:id="@+id/exp2_prRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/npRadioGroup"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/prtextView">
+
+            <RadioButton
+                android:id="@+id/exp2_prFast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/fast" />
+
+            <RadioButton
+                android:id="@+id/exp2_prModerate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/moderate" />
+
+            <RadioButton
+                android:id="@+id/exp2_prSlow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/slow" />
+
+            <RadioButton
+                android:id="@+id/exp2_prVerySlow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/veryslow" />
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/exp2_frRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintEnd_toStartOf="@+id/exp2_ampRadioGroup"
+            app:layout_constraintStart_toStartOf="@id/frtextView"
+            app:layout_constraintTop_toBottomOf="@id/frtextView">
+
+            <RadioButton
+                android:id="@+id/exp2_frHighChord"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/highchord" />
+
+            <RadioButton
+                android:id="@+id/exp2_frVeryHigh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/veryhigh" />
+
+            <RadioButton
+                android:id="@+id/exp2_frHigh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/high" />
+
+            <RadioButton
+                android:id="@+id/exp2_frMid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/mid" />
+
+            <RadioButton
+                android:id="@+id/exp2_frLow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/low" />
+
+            <RadioButton
+                android:id="@+id/exp2_frLowChord"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lowchord" />
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/exp2_ampRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/amptextView"
+            app:layout_constraintTop_toBottomOf="@id/amptextView">
+
+            <RadioButton
+                android:id="@+id/exp2_ampStrong"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/strong" />
+
+            <RadioButton
+                android:id="@+id/exp2_ampWeak"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/weak" />
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/exp2_npRadioGroup"
+            android:layout_width="75dp"
+            android:layout_height="221dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/exp2_frRadioGroup"
+            app:layout_constraintStart_toEndOf="@+id/prRadioGroup"
+            app:layout_constraintTop_toBottomOf="@+id/nptextView">
+
+            <RadioButton
+                android:id="@+id/exp2_np7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="7" />
+
+            <RadioButton
+                android:id="@+id/exp2_np6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="6" />
+
+            <RadioButton
+                android:id="@+id/exp2_np5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="5" />
+
+            <RadioButton
+                android:id="@+id/exp2_np4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="4" />
+
+            <RadioButton
+                android:id="@+id/exp2_np3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3" />
+
+            <RadioButton
+                android:id="@+id/exp2_np2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2" />
+
+            <RadioButton
+                android:id="@+id/exp2_np1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1" />
+        </RadioGroup>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/exp2_NextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/next"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+    <TextView
+        android:id="@+id/exp2_txtIDView"
+        android:layout_width="150dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:text="User ID"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toStartOf="@+id/exp2_txtTrialView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/exp2_btPrev"
+        android:layout_width="105dp"
+        android:layout_height="39dp"
+        android:text="@string/prev"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/exp2_btPause"
+        android:layout_width="92dp"
+        android:layout_height="38dp"
+        android:text="@string/pause"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/exp2_txtTrialView"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:text="Trial"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/exp2_txtIDView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
