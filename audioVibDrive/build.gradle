@@ -6,7 +6,6 @@ android {
 
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion 10
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_5
             targetCompatibility JavaVersion.VERSION_1_5
@@ -21,6 +20,3 @@ android {
     }
 }
 
-dependencies {
-    api project(':util')
-}

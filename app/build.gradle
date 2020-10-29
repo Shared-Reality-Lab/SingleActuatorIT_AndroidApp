@@ -29,7 +29,6 @@ dependencies {
     implementation fileTree(dir: 'C:\\Users\\dream\\AndroidStudioProjects\\AudioVibDrive_2', include: ['*.aar', '*.jar'], exclude: [])
     implementation fileTree(dir: 'C:\\Users\\dream\\AndroidStudioProjects\\Util', include: ['*.aar', '*.jar'], exclude: [])
     implementation project(path: ':audioVibDrive')
-    implementation project(path: ':util')
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
