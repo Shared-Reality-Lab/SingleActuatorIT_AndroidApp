@@ -2,10 +2,13 @@ package ca.mcgill.srl.singleactuatorit;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -17,6 +20,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import ca.mcgill.srl.audioVibDrive.AudioVibDriveContinuous;
+
+import static android.widget.Toast.LENGTH_LONG;
 
 public class Experiment2 extends AppCompatActivity {
 
@@ -206,6 +211,123 @@ public class Experiment2 extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), Integer.toString(np) + Integer.toString(pr) + Integer.toString(fr) + Integer.toString(amp), Toast.LENGTH_SHORT).show();
             }
         });
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                trial = trial + 1;
+                //training: feedback
+                if (trial < 56) {
+                    String str = getCorrectFeedbackanswer();
+                    MessageBox("Feedback", str);
+                }
+                //finish
+                if (trial == numstimuli)    {
+                    MessageBox("Finish!", "Thank you for your participation!");
+                    Toast.makeText(getApplicationContext(), "Experiment done. Thank you for your participation.", LENGTH_LONG).show();
+                }
+                //session finish: 2 min break;
+                if (trial % 28 == 0) {
+                    MessageBox("Session done", "Please make a 2-min rest.");
+                }
+                endThread();
+                switch(stimuli[trial][1])   {
+                    case 0:
+                        tf = 3200;
+                        break;
+                    case 1:
+                        tf = 2400;
+                        break;
+                    case 2:
+                        tf = 1800;
+                        break;
+                    case 3:
+                        tf = 1200;
+                        break;
+                }
+                mVibDrive = new AudioVibDriveContinuous(tf);
+                mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener()
+                {
+                    @Override
+                    public AudioVibDriveContinuous.VibInfo onNextVibration() {
+                        if(stimuli[trial][3] == 1)
+                            return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampstrong[stimuli[trial][2]], audiovolume);
+                        else
+                            return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampweak[stimuli[trial][2]], audiovolume);
+                    }
+                });
+                startThread();
+
+            }
+        });
+        previousButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (trial > 1) {
+                    trial = trial - 1;
+                    //setting back the selections
+                } else {
+                    MessageBox("Error", "This is the first trial!");
+                    return;
+                }
+                //update vibration
+                switch (stimuli[trial][1]) {
+                    case 0:
+                        tf = 3200;
+                        break;
+                    case 1:
+                        tf = 2400;
+                        break;
+                    case 2:
+                        tf = 1800;
+                        break;
+                    case 3:
+                        tf = 1200;
+                        break;
+                }
+                endThread();
+                mVibDrive = new AudioVibDriveContinuous(tf);
+                mVibDrive.setAudioData(audioData);
+                startThread();
+                mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
+                    public AudioVibDriveContinuous.VibInfo onNextVibration() {
+                        if (stimuli[trial][3] == 1)
+                            return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampstrong[stimuli[trial][2]], audiovolume);
+                        else
+                            return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampweak[stimuli[trial][2]], audiovolume);
+                    }
+                });
+                Toast.makeText(getApplicationContext(),Integer.toString(np)+Integer.toString(pr)+Integer.toString(fr)+Integer.toString(amp),Toast.LENGTH_SHORT).show();
+            }
+        });
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pause = !pause;
+                if(pause)  {
+                    //stop vib thread
+                    //stop timer
+                    endThread();
+                    Toast.makeText(getApplicationContext(), "Paused vib", Toast.LENGTH_SHORT).show();
+                }
+                else    {
+                    //resume vib thread
+                    //restart timer
+                    mVibDrive = new AudioVibDriveContinuous(tf);
+                    mVibDrive.setAudioData(audioData);
+                    startThread();
+                    mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
+                        public AudioVibDriveContinuous.VibInfo onNextVibration() {
+                            if(stimuli[trial][3] == 1)
+                                return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampstrong[stimuli[trial][2]], audiovolume);
+                            else
+                                return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampweak[stimuli[trial][2]], audiovolume);
+                        }
+                    });
+                    Toast.makeText(getApplicationContext(), "Restarted vib", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
     private void stimuliCreate()    {
         //pick random
@@ -245,7 +367,7 @@ public class Experiment2 extends AppCompatActivity {
             }
         }
         for(int j = numtraining; j < count; j++)    {
-            int r = (int) (Math.random() * (count-numtraining));
+            int r = (int) (Math.random() * (count-numtraining) + numtraining);
             if (r == j) {
                 continue;
             }
@@ -255,6 +377,88 @@ public class Experiment2 extends AppCompatActivity {
             stimuli[j] = temp;
             //rcount = rcount + 1;
         }
+        numstimuli = count;
     }
+    private String getCorrectFeedbackanswer()   {
+        String value = "";
+        switch (stimuli[trial][0]) {
+            case 1:
+                value = "Number: 1 ";
+                break;
+            case 2:
+                value = "Number: 2 ";
+                break;
+            case 3:
+                value = "Number: 3 ";
+                break;
+            case 4:
+                value = "Number: 4 ";
+                break;
+            case 5:
+                value = "Number: 5 ";
+                break;
+            case 6:
+                value = "Number: 6 ";
+                break;
+            case 7:
+                value = "Number: 7 ";
+                break;
+        }
+        switch (stimuli[trial][1]) {
+            case 0:
+                value = value + "\nPeriod: " + getString(R.string.veryslow);
+                break;
+            case 1:
+                value = value + "\nPeriod: " + getString(R.string.slow);
+                break;
+            case 2:
+                value = value + "\nPeriod: " + getString(R.string.moderate);
+                break;
+            case 3:
+                value = value + "\nPeriod: " + getString(R.string.fast);
+                break;
+        }
+        switch (stimuli[trial][2]) {
+            case 0:
+                value = value + "\nFrequency: " + getString(R.string.lowchord);
+                break;
+            case 1:
+                value = value + "\nFrequency: " + getString(R.string.low);
+                break;
+            case 2:
+                value = value + "\nFrequency: " + getString(R.string.mid);
+                break;
+            case 3:
+                value = value + "\nFrequency: " + getString(R.string.high);
+                break;
+            case 4:
+                value = value + "\nFrequency: " + getString(R.string.veryhigh);
+                break;
+            case 5:
+                value = value + "\nFrequency: " + getString(R.string.highchord);
+                break;
+        }
+        switch (stimuli[trial][3]) {
+            case 0:
+                value = value + "\nAmplitude: " + getString(R.string.weak);
+                break;
+            case 1:
+                value = value + "\nAmplitude: " + getString(R.string.strong);
+                break;
+        }
+        return value;
+    }
+    private void MessageBox(String title, String str) {
+        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+        dlgAlert.setMessage(str);
+        dlgAlert.setTitle(title);
+        dlgAlert.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        //dismiss the dialog
+                    }
+                });
 
+        dlgAlert.create().show();
+    }
 }
