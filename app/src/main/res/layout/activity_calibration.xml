@@ -155,9 +155,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
         android:text="@string/confirm"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calibrationSlider" />
 
@@ -166,6 +168,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="Audio Volume"
         app:layout_constraintBottom_toTopOf="@+id/calib_audioSeekbar"
@@ -173,14 +176,14 @@
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calib_confirmButton"
-        app:layout_constraintVertical_bias="0.195" />
+        app:layout_constraintVertical_bias="0.777" />
 
     <SeekBar
         android:id="@+id/calib_audioSeekbar"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="64dp"
         android:layout_marginEnd="32dp"
         android:progress="50"
         app:layout_constraintEnd_toEndOf="parent"

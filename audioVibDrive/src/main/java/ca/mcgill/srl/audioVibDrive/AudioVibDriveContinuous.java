@@ -7,8 +7,8 @@ public class AudioVibDriveContinuous extends AudioVibDrive implements Runnable {
 	private boolean mIsRun = true;
 
 
-	private int mTimeFrame;
-	private int mFrameSize;
+	private final int mTimeFrame;
+	private final int mFrameSize;
 	
 	private float mVibPrevFreq = 0f;
 	private double mVibPrevOffset = 0;
@@ -42,7 +42,7 @@ public class AudioVibDriveContinuous extends AudioVibDrive implements Runnable {
 	private void generateVibSignal(float freq, double amp) {
 		final double offset = getFrac(mVibPrevFreq * (double)(mFrameSize) / (double) VibAudioTrack.SAMPLE_RATE + mVibPrevOffset);
 		
-		final double cAmp = (double)convertAmp(getSafeAmp(amp));
+		final double cAmp = convertAmp(getSafeAmp(amp));
 		for (int i = 0; i < mFrameSize; i++)
 			mVibBuffer[i] = (short)(cAmp * Math.sin(2.0 * Math.PI * (freq * (double)i / (double) VibAudioTrack.SAMPLE_RATE + offset)));
 		
@@ -52,7 +52,7 @@ public class AudioVibDriveContinuous extends AudioVibDrive implements Runnable {
 	private void generateVibSignal(float freq1, double amp1, float freq2, double amp2) {
 		final double offset1 = getFrac(mVibPrevFreq1 * (double)(mFrameSize) / (double) VibAudioTrack.SAMPLE_RATE + mVibPrevOffset1);
 		final double offset2 = getFrac(mVibPrevFreq2 * (double)(mFrameSize) / (double) VibAudioTrack.SAMPLE_RATE + mVibPrevOffset2);
-		double cAmp[] = new double[2];
+		double[] cAmp = new double[2];
 		cAmp = getSafeAmp(amp1, amp2);
 		final double cAmp1 = convertAmp(cAmp[1]);
 		final double cAmp2 = convertAmp(cAmp[2]);
@@ -68,12 +68,12 @@ public class AudioVibDriveContinuous extends AudioVibDrive implements Runnable {
 
 	//Custom function for generate Vibrations for Experiments.
 	private void generateVibSignal(int freq, int amp) {
-		double fb[] = {50, 50, 110, 200, 320, 280};
-		double fc[] = {70, 50, 110, 200, 320, 320};
+		double[] fb = {50, 50, 110, 200, 320, 280};
+		double[] fc = {70, 50, 110, 200, 320, 320};
 
 		//equalizing perceived intensity
-		double weight_amp[] = {0.11, 0.11, 0.12, 0.22, 0.37, 0.34};
-		double cAmp = convertAmp((double)(amp/100.0) * weight_amp[freq]);
+		double[] weight_amp = {0.11, 0.11, 0.12, 0.22, 0.37, 0.34};
+		double cAmp = convertAmp((amp/100.0) * weight_amp[freq]);
 
 
 		final double cFreq1 = fb[freq];
@@ -86,25 +86,25 @@ public class AudioVibDriveContinuous extends AudioVibDrive implements Runnable {
 
 	}
 	private void generateVibSignal(int number, int freq, int amp) {
-		double p[] = {3.2, 2.4, 1.8, 1.2};
+		double[] p = {3.2, 2.4, 1.8, 1.2};
 		//mFrameSize = (int)(mAudioTrack.getSampleRate() * p[period]);
 		//mTimeFrame = (int)(p[period] * 1000);
 		//initBuf(mFrameSize);
 		//(SAMPLE_RATE = 48000)
 		int noteperbar = 8;
 		int notesize = (int) (mFrameSize / noteperbar * 0.6);
-		double fb[] = {50, 50, 110, 200, 320, 280};
-		double fc[] = {70, 50, 110, 200, 320, 320};
+		double[] fb = {50, 50, 110, 200, 320, 280};
+		double[] fc = {70, 50, 110, 200, 320, 320};
 
 		//equalizing perceived intensity
-		double weight_amp[] = {0.11, 0.11, 0.12, 0.22, 0.37, 0.34};
-		double cAmp = convertAmp((double)(amp/100.0) * weight_amp[freq]);
+		double[] weight_amp = {0.11, 0.11, 0.12, 0.22, 0.37, 0.34};
+		double cAmp = convertAmp((amp/100.0) * weight_amp[freq]);
 
 		final double cFreq1 = fb[freq];
 		final double cFreq2 = fc[freq];
 
 		//making masker (numbers)
-		short masker[] = new short[mFrameSize];
+		short[] masker = new short[mFrameSize];
 		Log.e ("framesize", Integer.toString(mFrameSize));
 		for (int i = 0; i < number; i++)	{
 			for(int j = 0; j < notesize; j++)
@@ -182,7 +182,7 @@ public class AudioVibDriveContinuous extends AudioVibDrive implements Runnable {
 		audioData = data;
 	}
 	public interface OnNextDriveListener {
-		public VibInfo onNextVibration();
+		VibInfo onNextVibration();
 	}
 	
 	public static class VibInfo {

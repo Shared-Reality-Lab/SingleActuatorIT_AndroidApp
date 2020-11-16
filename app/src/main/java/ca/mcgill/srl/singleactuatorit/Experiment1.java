@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 
 import ca.mcgill.srl.audioVibDrive.AudioVibDriveContinuous;
 
@@ -43,18 +45,20 @@ public class Experiment1 extends AppCompatActivity {
     protected int[] numoflevels = {7,4,6,2};
     protected int[] phasesum;
     protected int[] breaktimes = {24,0,18,0};
+    protected int[] mandatoryBreak = {0, 0, 0, 0};
     protected int numstimuli;
     protected int trial = 0;
     protected int[][] stimuli;
     protected int[][] results;
-    protected String logfilename;
-    protected File file;
     protected boolean pause;
     protected int phase;
     int latin;
     protected short[] audioData;
 
     RadioGroup npgroup, prgroup, frgroup, ampgroup;
+    Logger mLogger;
+    Logger mResultLogger;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +77,20 @@ public class Experiment1 extends AppCompatActivity {
         ampgroup = findViewById(R.id.exp1_ampRadioGroup);
 
         int userID = intent.getExtras().getInt("id");
-        userTxt.setText("User ID: " + Integer.toString(userID));
+        userTxt.setText("User ID: " + userID);
         ampweak = intent.getExtras().getIntArray("ampweak");
         ampstrong = intent.getExtras().getIntArray("ampstrong");
         audiovolume = intent.getExtras().getInt("audiovolume");
         audioData = intent.getExtras().getShortArray("audiodata");
+
+        //logger setting
+        SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd_HH:mm:ss.SSS");
+        Date time = new Date();
+        String time1 = sdf.format(time);
+        String logPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/log/" + userID +"_Log_Exp1" + time1 + ".txt";
+        mLogger = new Logger(logPath, getApplicationContext());
+        String resultPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/log/" + userID +"_Log_Exp1" + time1 + ".txt";
+        mResultLogger = new Logger(resultPath, getApplicationContext());
 
         //stimuli cond. init.
         numstimuli = numoftraining[0] + (numoflevels[0]*numoflevels[0]) + numoftraining[1] + (numoflevels[1]*numoflevels[1]) +
@@ -148,6 +161,7 @@ public class Experiment1 extends AppCompatActivity {
                         np = 1;
                         break;
                 }
+                mLogger.WriteMessage("Number\t"+ np, true);
             }
         });
         prgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -171,6 +185,7 @@ public class Experiment1 extends AppCompatActivity {
                         tf = 3200;
                         break;
                 }
+                mLogger.WriteMessage("Period\t"+ pr, true);
             }
         });
         frgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -196,6 +211,7 @@ public class Experiment1 extends AppCompatActivity {
                         fr = 0;
                         break;
                 }
+                mLogger.WriteMessage("Frequency\t"+ fr, true);
             }
         });
         ampgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -209,6 +225,7 @@ public class Experiment1 extends AppCompatActivity {
                         amp = 0;
                         break;
                 }
+                mLogger.WriteMessage("Amplitude\t"+ amp, true);
             }
         });
 
@@ -252,12 +269,18 @@ public class Experiment1 extends AppCompatActivity {
                 results[trial][2] = answer; // user's answer
                 Log.e("result", "" + results[trial][0] + results[trial][1] + results[trial][2]);
                 trial = trial + 1;
-                trialTxt.setText("Trial: " + Integer.toString(trial));
+                trialTxt.setText("Trial: " + trial);
+
+                String LoggerString = "Trial: " + trial + " Stimuli: " + stimuli[trial][phase] + " Answer :" + answer + "\n";
+                mLogger.WriteMessage(LoggerString, true);
                 //finish
                 if(trial == numstimuli)    {
                     MessageBox("Finish", "Experiment 1 done. Thank you and see you tomorrow!");
                     endThread();
                     //File summary output
+                    for(int i = 0; i <numstimuli; i++) {
+                        mResultLogger.WriteArray(results[i], false, true);
+                    }
                     finish();
                 }
                 //phase up
@@ -266,7 +289,12 @@ public class Experiment1 extends AppCompatActivity {
                     phase++;
                     hideRadioGroups(phase);
                 }
-
+                //mandatory break
+                if(trial == mandatoryBreak[phase])  {
+                    MessageBox("Mandatory break", "Please take a 2-minute rest.");
+                    //phase++;
+                    //hideRadioGroups(phase);
+                }
                 switch(stimuli[trial][1])   {
                     case 0:
                         tf = 3200;
@@ -338,7 +366,9 @@ public class Experiment1 extends AppCompatActivity {
                             return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampweak[stimuli[trial][2]], audiovolume);
                     }
                 });
-                Toast.makeText(getApplicationContext(), Integer.toString(np)+Integer.toString(pr)+Integer.toString(fr)+Integer.toString(amp), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), Integer.toString(np)+ pr + fr + amp, Toast.LENGTH_SHORT).show();
+                String LoggerString = "Trial: " + trial + " Stimuli: " + stimuli[trial][phase] + "Back";
+                mLogger.WriteMessage(LoggerString, true);
             }
         });
 
@@ -468,12 +498,7 @@ public class Experiment1 extends AppCompatActivity {
     // 0 to numtrials[1st], numtrials+numlevels^2[1st]+numtrials[2nd] ...
     private boolean isTrainingTrial(int trial, int phase) {
         int rangebottom = phasesum[phase], rangetop = phasesum[phase]+numoftraining[experimentalorder[latin][phase]];
-        if (trial >= rangebottom && trial < rangetop) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return trial >= rangebottom && trial < rangetop;
     }
     private void stimuliCreate(int userID)    {
         //pick random
@@ -574,6 +599,7 @@ public class Experiment1 extends AppCompatActivity {
                 stimuli[rcount+j] = temp;
                 //rcount = rcount + 1;
             }*/
+            if(breaktimes[t] != 0) mandatoryBreak[i] = phasesum[i] + breaktimes[t];
             phasesum[i+1] = count;
         }
     }

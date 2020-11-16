@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -16,12 +17,14 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Date;
 
 import ca.mcgill.srl.audioVibDrive.AudioVibDriveContinuous;
 
@@ -32,12 +35,11 @@ public class Calibration extends AppCompatActivity {
     protected int audiovolume = 50;
     protected int currentfr = 2;
     protected EditText userTxt;
-
+    protected Logger mResultLogger;
     private Thread mVibThread = null;
     protected AudioVibDriveContinuous mVibDrive;
-    //protected AudioVibDriveContinuous.OnNextDriveListener mNextVib;
+    public String rootPath;
     public static int TIME_FRAME = 800;
-   // public static int SAMPLING_RATE = 48000;
 
     private void startThread()  {
         if (mVibThread == null) {
@@ -64,6 +66,11 @@ public class Calibration extends AppCompatActivity {
 
         Intent intent = getIntent();
 
+        //save file location
+        rootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        rootPath = rootPath + "/singleit/calib/";
+        Toast.makeText(getApplicationContext(), rootPath, Toast.LENGTH_SHORT).show();
+
         RadioGroup frgroup = findViewById(R.id.calib_frRadioGroup);
         final RadioGroup ampgroup = findViewById(R.id.calib_ampRadioGroup);
 
@@ -82,9 +89,6 @@ public class Calibration extends AppCompatActivity {
         slider.setProgress(ampstrong[3]);
         Button confirmButton = findViewById(R.id.calib_confirmButton);
 
-        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-        }
 
         short[] audiodata;
         final int[] userID = {intent.getExtras().getInt("id")};
@@ -109,9 +113,23 @@ public class Calibration extends AppCompatActivity {
         confirmButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //file write
+                int uID = Integer.parseInt(userTxt.getText().toString());
+
+                rootPath = rootPath + "ID" + uID + ".txt";
+                //Toast.makeText(getApplicationContext(), rootPath, Toast.LENGTH_SHORT).show();
+                mResultLogger = new Logger(rootPath, getApplicationContext());
+                mResultLogger.WriteMessage(Integer.toString(uID), false);
+                mResultLogger.WriteArray(ampweak, false, false);
+                mResultLogger.WriteArray(ampstrong, false, false);
+                mResultLogger.WriteMessage(Integer.toString(audiovolume), false);
+                mResultLogger.Close();
+
+
+
                 Intent resIntent = new Intent();
                 //Toast.makeText(getApplicationContext(), userTxt.getText().toString(), Toast.LENGTH_SHORT).show();
-                int uID = Integer.parseInt(userTxt.getText().toString());
+
                 resIntent.putExtra("id", uID);
                 resIntent.putExtra("ampweak", ampweak);
                 resIntent.putExtra("ampstrong", ampstrong);

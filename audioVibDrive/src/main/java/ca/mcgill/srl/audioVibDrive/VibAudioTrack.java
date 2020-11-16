@@ -7,7 +7,7 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 
 class VibAudioTrack extends AudioTrack {
-	private short[] mBuffer;
+	private final short[] mBuffer;
 	
 	public static final int SAMPLE_RATE = 48000;
 	

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -18,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 
 import ca.mcgill.srl.audioVibDrive.AudioVibDriveContinuous;
 
@@ -31,14 +33,17 @@ public class Experiment2 extends AppCompatActivity {
     protected int np,pr,fr,amp, tf = 1800;
     protected short[] audioData;
 
-    protected int numstimuli;
+    protected int numstimuli = 56 + 336;
     protected int trial = 0;
     protected int[][] stimuli;
     protected int[][] results;
     protected String logfilename;
     protected File file;
     protected boolean pause;
-
+    Logger mLogger;
+    Logger mResultLogger;
+    TextView userTxt;
+    TextView trialTxt;
 
     private Thread mVibThread = null;
     protected AudioVibDriveContinuous mVibDrive;
@@ -66,11 +71,11 @@ public class Experiment2 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_experiment1);
+        setContentView(R.layout.activity_experiment2);
         Intent intent = getIntent();
 
-        final TextView userTxt = findViewById(R.id.exp2_txtIDView);
-        final TextView trialTxt = findViewById(R.id.exp2_txtTrialView);
+        userTxt = findViewById(R.id.exp2_txtIDView);
+        trialTxt = findViewById(R.id.exp2_txtTrialView);
         Button nextButton = findViewById(R.id.exp2_NextButton);
         Button previousButton = findViewById(R.id.exp2_btPrev);
         Button pauseButton = findViewById(R.id.exp2_btPause);
@@ -80,12 +85,19 @@ public class Experiment2 extends AppCompatActivity {
         RadioGroup ampgroup = findViewById(R.id.exp2_ampRadioGroup);
 
         int userID = intent.getExtras().getInt("id");
-        userTxt.setText("User ID: " + Integer.toString(userID));
+        userTxt.setText("User ID: " + userID);
         ampweak = intent.getExtras().getIntArray("ampweak");
         ampstrong = intent.getExtras().getIntArray("ampstrong");
         audiovolume = intent.getExtras().getInt("audiovolume");
         audioData = intent.getExtras().getShortArray("audiodata");
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd_HH:mm:ss.SSS");
+        Date time = new Date();
+        String time1 = sdf.format(time);
+        String logPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/log/" + userID +"_Log_Exp2" + time1 + ".txt";
+        mLogger = new Logger(logPath, getApplicationContext());
+        String resultPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/log/" + userID +"_Log_Exp2" + time1 + ".txt";
+        mResultLogger = new Logger(resultPath, getApplicationContext());
 
         stimuli = new int[numstimuli][4];
         results = new int[numstimuli][4];
@@ -148,6 +160,7 @@ public class Experiment2 extends AppCompatActivity {
                         np = 1;
                         break;
                 }
+                mLogger.WriteMessage("Number\t"+ np, true);
                 //Toast.makeText(getApplicationContext(), Integer.toString(np) + Integer.toString(pr) + Integer.toString(fr) + Integer.toString(amp), Toast.LENGTH_SHORT).show();
             }
         });
@@ -168,6 +181,7 @@ public class Experiment2 extends AppCompatActivity {
                         pr = 1;
                         break;
                 }
+                mLogger.WriteMessage("Period\t"+ pr, true);
                 //Toast.makeText(getApplicationContext(), Integer.toString(np) + Integer.toString(pr) + Integer.toString(fr) + Integer.toString(amp), Toast.LENGTH_SHORT).show();
             }
         });
@@ -194,6 +208,7 @@ public class Experiment2 extends AppCompatActivity {
                         fr = 1;
                         break;
                 }
+                mLogger.WriteMessage("Frequency\t"+ fr, true);
                 //Toast.makeText(getApplicationContext(), Integer.toString(np) + Integer.toString(pr) + Integer.toString(fr) + Integer.toString(amp), Toast.LENGTH_SHORT).show();
             }
         });
@@ -208,6 +223,7 @@ public class Experiment2 extends AppCompatActivity {
                         amp = 1;
                         break;
                 }
+                mLogger.WriteMessage("Amplitude\t"+ amp, true);
                 //Toast.makeText(getApplicationContext(), Integer.toString(np) + Integer.toString(pr) + Integer.toString(fr) + Integer.toString(amp), Toast.LENGTH_SHORT).show();
             }
         });
@@ -215,7 +231,12 @@ public class Experiment2 extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                results[trial][0] = np;
+                results[trial][1] = pr;
+                results[trial][2] = fr;
+                results[trial][3] = amp;
                 trial = trial + 1;
+                trialTxt.setText("Trial: " + trial);
                 //training: feedback
                 if (trial < 56) {
                     String str = getCorrectFeedbackanswer();
@@ -225,11 +246,22 @@ public class Experiment2 extends AppCompatActivity {
                 if (trial == numstimuli)    {
                     MessageBox("Finish!", "Thank you for your participation!");
                     Toast.makeText(getApplicationContext(), "Experiment done. Thank you for your participation.", LENGTH_LONG).show();
+                    for(int i = 0; i <numstimuli; i++) {
+                        mResultLogger.WriteArray(stimuli[i], false, true);
+                        mResultLogger.WriteArray(results[i], false, true);
+                    }
                 }
                 //session finish: 2 min break;
                 if (trial % 28 == 0) {
-                    MessageBox("Session done", "Please make a 2-min rest.");
+                    MessageBox("Session break", "Please make a 2-min rest.");
                 }
+                int[] resultarr = new int[9];
+                resultarr[0] = trial;
+                resultarr[1] = stimuli[trial][0]; resultarr[2] = stimuli[trial][1]; resultarr[3] = stimuli[trial][2]; resultarr[4] = stimuli[trial][3];
+                resultarr[5] = results[trial][0]; resultarr[6] = results[trial][1]; resultarr[7] = results[trial][2]; resultarr[8] = results[trial][3];
+                String LoggerString = "Trial: " + trial;
+                mLogger.WriteMessage(LoggerString, true);
+                mLogger.WriteArray(resultarr, false, true);
                 endThread();
                 switch(stimuli[trial][1])   {
                     case 0:
@@ -285,6 +317,7 @@ public class Experiment2 extends AppCompatActivity {
                         tf = 1200;
                         break;
                 }
+
                 endThread();
                 mVibDrive = new AudioVibDriveContinuous(tf);
                 mVibDrive.setAudioData(audioData);
@@ -297,7 +330,9 @@ public class Experiment2 extends AppCompatActivity {
                             return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampweak[stimuli[trial][2]], audiovolume);
                     }
                 });
-                Toast.makeText(getApplicationContext(),Integer.toString(np)+Integer.toString(pr)+Integer.toString(fr)+Integer.toString(amp),Toast.LENGTH_SHORT).show();
+                String LoggerString = "Trial: " + trial + " Stimuli: " + stimuli[trial].toString() + "Back";
+                mLogger.WriteMessage(LoggerString, true);
+                Toast.makeText(getApplicationContext(),Integer.toString(np)+ pr + fr + amp,Toast.LENGTH_SHORT).show();
             }
         });
         pauseButton.setOnClickListener(new View.OnClickListener() {
@@ -332,7 +367,7 @@ public class Experiment2 extends AppCompatActivity {
     private void stimuliCreate()    {
         //pick random
         int numtraining = 56;
-        int numoflevels[] = {7, 4, 6, 2}; //np, pr, fr, amp
+        int[] numoflevels = {7, 4, 6, 2}; //np, pr, fr, amp
         for (int i = 0; i < numtraining; i++) {
             stimuli[i][0] = (int) (Math.random() * numoflevels[0]) + 1;
             stimuli[i][1] = (int) (Math.random() * numoflevels[1]);
@@ -345,7 +380,7 @@ public class Experiment2 extends AppCompatActivity {
             if (r == j) {
                 continue;
             }
-            int temp[] = new int[4];
+            int[] temp = new int[4];
             temp = stimuli[r];
             stimuli[r] = stimuli[j];
             stimuli[j] = temp;
@@ -371,7 +406,7 @@ public class Experiment2 extends AppCompatActivity {
             if (r == j) {
                 continue;
             }
-            int temp[] = new int[4];
+            int[] temp = new int[4];
             temp = stimuli[r];
             stimuli[r] = stimuli[j];
             stimuli[j] = temp;

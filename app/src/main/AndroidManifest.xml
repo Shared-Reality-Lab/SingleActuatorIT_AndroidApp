@@ -3,6 +3,7 @@
     package="ca.mcgill.srl.singleactuatorit">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -14,7 +15,9 @@
         <activity android:name=".Experiment1" />
         <activity android:name=".Familization" />
         <activity android:name=".Calibration" />
-        <activity android:name=".StartActivity">
+        <activity android:name=".LoadFile" />
+        <activity android:name=".StartActivity"
+            android:label="@string/app_name">>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

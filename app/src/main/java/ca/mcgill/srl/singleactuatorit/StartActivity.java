@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,7 +43,13 @@ public class StartActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        audiodata = new short[(int) (SAMPLING_RATE * LONGEST_TIME_FRAME / 1000)];
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
+        audiodata = new short[(SAMPLING_RATE * LONGEST_TIME_FRAME / 1000)];
         String audioFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath() + "/pinknoise.wav";
         File file = new File(audioFileName);
         //Log.e("audioFill", "=" + file.length());
@@ -71,7 +78,7 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
         TextView uidView = findViewById(R.id.txtIDView);
         exp1Button = findViewById(R.id.exp1Button);
-        //exp1Button.setEnabled(false);
+        exp1Button.setEnabled(false);
         exp1Button.setOnClickListener(new Button.OnClickListener()
         {
             @Override
@@ -141,10 +148,6 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), LoadFile.class);
-                intent.putExtra("id", userID);
-                intent.putExtra("ampweak", ampweak);
-                intent.putExtra("ampstrong", ampstrong);
-                intent.putExtra("audiovolume", audiovolume);
                 startActivityForResult(intent, request_fileload_Code);
             }
         });
@@ -161,16 +164,23 @@ public class StartActivity extends AppCompatActivity {
                 ampstrong = intent.getExtras().getIntArray("ampstrong");
                 audiovolume = intent.getExtras().getInt("audiovolume");
                 TextView uidView = findViewById(R.id.txtIDView);
-                uidView.setText("user ID: " + Integer.toString(userID));
+                uidView.setText("user ID: " + userID);
                 if (userID != -1) {
                     familButton.setEnabled(true);
                 }
             } else if (requestCode == request_famil_Code) {
                 exp1Button.setEnabled(true);
             } else if (requestCode == request_exp1_Code) {
-                exp2Button.setEnabled(true);
+                //exp2Button.setEnabled(true);
+                Toast.makeText(this.getApplicationContext(),"Finished 1st day", Toast.LENGTH_SHORT);
             } else if(requestCode == request_fileload_Code) {
+                userID = intent.getExtras().getInt("id");
+                ampweak = intent.getExtras().getIntArray("ampweak");
+                ampstrong = intent.getExtras().getIntArray("ampstrong");
+                audiovolume = intent.getExtras().getInt("audiovolume");
                 exp2Button.setEnabled(true);
+                TextView uidView = findViewById(R.id.txtIDView);
+                uidView.setText("user ID: " + userID);
             }
 
         }
