@@ -33,7 +33,7 @@ public class Experiment2 extends AppCompatActivity {
     protected int np,pr,fr,amp, tf = 1800;
     protected short[] audioData;
 
-    protected int numstimuli = 56 + 336;
+    protected int numstimuli = 24 + 336;
     protected int trial = 0;
     protected int[][] stimuli;
     protected int[][] results;
@@ -48,7 +48,7 @@ public class Experiment2 extends AppCompatActivity {
     private Thread mVibThread = null;
     protected AudioVibDriveContinuous mVibDrive;
     protected AudioVibDriveContinuous.OnNextDriveListener mNextVib;
-    public static int SAMPLING_RATE = 48000;
+    public static int SAMPLING_RATE = 12000;
 
     private void startThread()  {
         if (mVibThread == null) {
@@ -96,7 +96,7 @@ public class Experiment2 extends AppCompatActivity {
         String time1 = sdf.format(time);
         String logPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/log/" + userID +"_Log_Exp2" + time1 + ".txt";
         mLogger = new Logger(logPath, getApplicationContext());
-        String resultPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/log/" + userID +"_Log_Exp2" + time1 + ".txt";
+        String resultPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/log/" + userID +"_Result_Exp2" + time1 + ".txt";
         mResultLogger = new Logger(resultPath, getApplicationContext());
 
         stimuli = new int[numstimuli][4];
@@ -332,7 +332,7 @@ public class Experiment2 extends AppCompatActivity {
                 });
                 String LoggerString = "Trial: " + trial + " Stimuli: " + stimuli[trial].toString() + "Back";
                 mLogger.WriteMessage(LoggerString, true);
-                Toast.makeText(getApplicationContext(),Integer.toString(np)+ pr + fr + amp,Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),Integer.toString(np)+ pr + fr + amp,Toast.LENGTH_SHORT).show();
             }
         });
         pauseButton.setOnClickListener(new View.OnClickListener() {
@@ -366,7 +366,7 @@ public class Experiment2 extends AppCompatActivity {
     }
     private void stimuliCreate()    {
         //pick random
-        int numtraining = 56;
+        int numtraining = 24;
         int[] numoflevels = {7, 4, 6, 2}; //np, pr, fr, amp
         for (int i = 0; i < numtraining; i++) {
             stimuli[i][0] = (int) (Math.random() * numoflevels[0]) + 1;

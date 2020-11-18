@@ -9,7 +9,7 @@ import android.media.AudioTrack;
 class VibAudioTrack extends AudioTrack {
 	private final short[] mBuffer;
 	
-	public static final int SAMPLE_RATE = 48000;
+	public static final int SAMPLE_RATE = 12000;
 	
 	public VibAudioTrack(int mode, int bufferSize) {
 		super(AudioManager.STREAM_MUSIC, SAMPLE_RATE, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT,

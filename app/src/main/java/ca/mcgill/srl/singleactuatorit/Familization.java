@@ -134,7 +134,7 @@ public class Familization extends AppCompatActivity {
                         else return new AudioVibDriveContinuous.VibInfo(np, fr, ampweak[fr], audiovolume);
                     }
                 });
-                Toast.makeText(getApplicationContext(), Integer.toString(np)+ pr + fr + amp, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), Integer.toString(np)+ pr + fr + amp, Toast.LENGTH_SHORT).show();
             }
         });
         prgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -169,7 +169,7 @@ public class Familization extends AppCompatActivity {
                         else return new AudioVibDriveContinuous.VibInfo(np, fr, ampweak[fr], audiovolume);
                     }
                 });
-                Toast.makeText(getApplicationContext(), Integer.toString(np)+ pr + fr + amp, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), Integer.toString(np)+ pr + fr + amp, Toast.LENGTH_SHORT).show();
             }
         });
         frgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -202,7 +202,7 @@ public class Familization extends AppCompatActivity {
                         else return new AudioVibDriveContinuous.VibInfo(np, fr, ampweak[fr], audiovolume);
                     }
                 });
-                Toast.makeText(getApplicationContext(), Integer.toString(np)+ pr + fr + amp, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), Integer.toString(np)+ pr + fr + amp, Toast.LENGTH_SHORT).show();
             }
         });
         ampgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -223,7 +223,7 @@ public class Familization extends AppCompatActivity {
                         else return new AudioVibDriveContinuous.VibInfo(np, fr, ampweak[fr], audiovolume);
                     }
                 });
-                Toast.makeText(getApplicationContext(), Integer.toString(np)+ pr + fr + amp, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), Integer.toString(np)+ pr + fr + amp, Toast.LENGTH_SHORT).show();
             }
         });
         doneButton.setOnClickListener(new Button.OnClickListener() {

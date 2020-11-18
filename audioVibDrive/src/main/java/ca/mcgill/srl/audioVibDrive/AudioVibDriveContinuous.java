@@ -90,7 +90,7 @@ public class AudioVibDriveContinuous extends AudioVibDrive implements Runnable {
 		//mFrameSize = (int)(mAudioTrack.getSampleRate() * p[period]);
 		//mTimeFrame = (int)(p[period] * 1000);
 		//initBuf(mFrameSize);
-		//(SAMPLE_RATE = 48000)
+		//(SAMPLE_RATE = 12000)
 		int noteperbar = 8;
 		int notesize = (int) (mFrameSize / noteperbar * 0.6);
 		double[] fb = {50, 50, 110, 200, 320, 280};
@@ -105,7 +105,7 @@ public class AudioVibDriveContinuous extends AudioVibDrive implements Runnable {
 
 		//making masker (numbers)
 		short[] masker = new short[mFrameSize];
-		Log.e ("framesize", Integer.toString(mFrameSize));
+		//Log.e ("framesize", Integer.toString(mFrameSize));
 		for (int i = 0; i < number; i++)	{
 			for(int j = 0; j < notesize; j++)
 			masker[i*(mFrameSize/noteperbar)+j] = 1;

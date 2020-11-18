@@ -37,7 +37,7 @@ public class StartActivity extends AppCompatActivity {
     protected Button familButton;
     protected Button loadButton;
 
-    final int SAMPLING_RATE = 48000;
+    final int SAMPLING_RATE = 12000;
     final int LONGEST_TIME_FRAME = 3200;
 
     @Override
@@ -50,7 +50,7 @@ public class StartActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
         audiodata = new short[(SAMPLING_RATE * LONGEST_TIME_FRAME / 1000)];
-        String audioFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath() + "/pinknoise.wav";
+        String audioFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath() + "/pinknoise_12k.wav";
         File file = new File(audioFileName);
         //Log.e("audioFill", "=" + file.length());
         byte[] wavHeader = new byte[44];
@@ -172,7 +172,8 @@ public class StartActivity extends AppCompatActivity {
                 exp1Button.setEnabled(true);
             } else if (requestCode == request_exp1_Code) {
                 //exp2Button.setEnabled(true);
-                Toast.makeText(this.getApplicationContext(),"Finished 1st day", Toast.LENGTH_SHORT);
+                Toast.makeText(this.getApplicationContext(),"Finished 1st day", Toast.LENGTH_LONG);
+
             } else if(requestCode == request_fileload_Code) {
                 userID = intent.getExtras().getInt("id");
                 ampweak = intent.getExtras().getIntArray("ampweak");

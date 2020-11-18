@@ -69,7 +69,7 @@ public class Calibration extends AppCompatActivity {
         //save file location
         rootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         rootPath = rootPath + "/singleit/calib/";
-        Toast.makeText(getApplicationContext(), rootPath, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), rootPath, Toast.LENGTH_SHORT).show();
 
         RadioGroup frgroup = findViewById(R.id.calib_frRadioGroup);
         final RadioGroup ampgroup = findViewById(R.id.calib_ampRadioGroup);
