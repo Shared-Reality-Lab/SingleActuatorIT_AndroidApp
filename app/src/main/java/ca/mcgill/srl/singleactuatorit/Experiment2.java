@@ -33,7 +33,7 @@ public class Experiment2 extends AppCompatActivity {
     protected int np,pr,fr,amp, tf = 1800;
     protected short[] audioData;
 
-    protected int numstimuli = 24 + 336;
+    protected int numstimuli = 56 + 336;
     protected int trial = 0;
     protected int[][] stimuli;
     protected int[][] results;
@@ -49,6 +49,8 @@ public class Experiment2 extends AppCompatActivity {
     protected AudioVibDriveContinuous mVibDrive;
     protected AudioVibDriveContinuous.OnNextDriveListener mNextVib;
     public static int SAMPLING_RATE = 12000;
+
+    protected boolean istouched;
 
     private void startThread()  {
         if (mVibThread == null) {
@@ -76,7 +78,7 @@ public class Experiment2 extends AppCompatActivity {
 
         userTxt = findViewById(R.id.exp2_txtIDView);
         trialTxt = findViewById(R.id.exp2_txtTrialView);
-        Button nextButton = findViewById(R.id.exp2_NextButton);
+        final Button nextButton = findViewById(R.id.exp2_NextButton);
         Button previousButton = findViewById(R.id.exp2_btPrev);
         Button pauseButton = findViewById(R.id.exp2_btPause);
         RadioGroup npgroup = findViewById(R.id.exp2_npRadioGroup);
@@ -96,7 +98,7 @@ public class Experiment2 extends AppCompatActivity {
         String time1 = sdf.format(time);
         String logPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/log/" + userID +"_Log_Exp2" + time1 + ".txt";
         mLogger = new Logger(logPath, getApplicationContext());
-        String resultPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/log/" + userID +"_Result_Exp2" + time1 + ".txt";
+        String resultPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/result/" + userID +"_Result_Exp2" + time1 + ".txt";
         mResultLogger = new Logger(resultPath, getApplicationContext());
 
         stimuli = new int[numstimuli][4];
@@ -132,6 +134,7 @@ public class Experiment2 extends AppCompatActivity {
                     return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampweak[stimuli[trial][2]], audiovolume);
             }
         });
+        istouched = false;
         startThread();
 
         npgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -161,6 +164,10 @@ public class Experiment2 extends AppCompatActivity {
                         break;
                 }
                 mLogger.WriteMessage("Number\t"+ np, true);
+                if(istouched == false)  {
+                    istouched = true;
+                    nextButton.setEnabled(true);
+                }
                 //Toast.makeText(getApplicationContext(), Integer.toString(np) + Integer.toString(pr) + Integer.toString(fr) + Integer.toString(amp), Toast.LENGTH_SHORT).show();
             }
         });
@@ -169,17 +176,21 @@ public class Experiment2 extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.exp2_prFast:
-                        pr = 4;
-                        break;
-                    case R.id.exp2_prModerate:
                         pr = 3;
                         break;
-                    case R.id.exp2_prSlow:
+                    case R.id.exp2_prModerate:
                         pr = 2;
                         break;
-                    case R.id.exp2_prVerySlow:
+                    case R.id.exp2_prSlow:
                         pr = 1;
                         break;
+                    case R.id.exp2_prVerySlow:
+                        pr = 0;
+                        break;
+                }
+                if(istouched == false)  {
+                    istouched = true;
+                    nextButton.setEnabled(true);
                 }
                 mLogger.WriteMessage("Period\t"+ pr, true);
                 //Toast.makeText(getApplicationContext(), Integer.toString(np) + Integer.toString(pr) + Integer.toString(fr) + Integer.toString(amp), Toast.LENGTH_SHORT).show();
@@ -190,23 +201,27 @@ public class Experiment2 extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.exp2_frHighChord:
-                        fr = 6;
-                        break;
-                    case R.id.exp2_frVeryHigh:
                         fr = 5;
                         break;
-                    case R.id.exp2_frHigh:
+                    case R.id.exp2_frVeryHigh:
                         fr = 4;
                         break;
-                    case R.id.exp2_frMid:
+                    case R.id.exp2_frHigh:
                         fr = 3;
                         break;
-                    case R.id.exp2_frLow:
+                    case R.id.exp2_frMid:
                         fr = 2;
                         break;
-                    case R.id.exp2_frLowChord:
+                    case R.id.exp2_frLow:
                         fr = 1;
                         break;
+                    case R.id.exp2_frLowChord:
+                        fr = 0;
+                        break;
+                }
+                if(istouched == false)  {
+                    istouched = true;
+                    nextButton.setEnabled(true);
                 }
                 mLogger.WriteMessage("Frequency\t"+ fr, true);
                 //Toast.makeText(getApplicationContext(), Integer.toString(np) + Integer.toString(pr) + Integer.toString(fr) + Integer.toString(amp), Toast.LENGTH_SHORT).show();
@@ -217,11 +232,15 @@ public class Experiment2 extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.exp2_ampStrong:
-                        amp = 2;
-                        break;
-                    case R.id.exp2_ampWeak:
                         amp = 1;
                         break;
+                    case R.id.exp2_ampWeak:
+                        amp = 0;
+                        break;
+                }
+                if(istouched == false)  {
+                    istouched = true;
+                    nextButton.setEnabled(true);
                 }
                 mLogger.WriteMessage("Amplitude\t"+ amp, true);
                 //Toast.makeText(getApplicationContext(), Integer.toString(np) + Integer.toString(pr) + Integer.toString(fr) + Integer.toString(amp), Toast.LENGTH_SHORT).show();
@@ -231,30 +250,15 @@ public class Experiment2 extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                istouched = false;
+                nextButton.setEnabled(false);
+
                 results[trial][0] = np;
                 results[trial][1] = pr;
                 results[trial][2] = fr;
                 results[trial][3] = amp;
-                trial = trial + 1;
-                trialTxt.setText("Trial: " + trial);
-                //training: feedback
-                if (trial < 56) {
-                    String str = getCorrectFeedbackanswer();
-                    MessageBox("Feedback", str);
-                }
-                //finish
-                if (trial == numstimuli)    {
-                    MessageBox("Finish!", "Thank you for your participation!");
-                    Toast.makeText(getApplicationContext(), "Experiment done. Thank you for your participation.", LENGTH_LONG).show();
-                    for(int i = 0; i <numstimuli; i++) {
-                        mResultLogger.WriteArray(stimuli[i], false, true);
-                        mResultLogger.WriteArray(results[i], false, true);
-                    }
-                }
-                //session finish: 2 min break;
-                if (trial % 28 == 0) {
-                    MessageBox("Session break", "Please make a 2-min rest.");
-                }
+
                 int[] resultarr = new int[9];
                 resultarr[0] = trial;
                 resultarr[1] = stimuli[trial][0]; resultarr[2] = stimuli[trial][1]; resultarr[3] = stimuli[trial][2]; resultarr[4] = stimuli[trial][3];
@@ -263,32 +267,73 @@ public class Experiment2 extends AppCompatActivity {
                 mLogger.WriteMessage(LoggerString, true);
                 mLogger.WriteArray(resultarr, false, true);
                 endThread();
-                switch(stimuli[trial][1])   {
-                    case 0:
-                        tf = 3200;
-                        break;
-                    case 1:
-                        tf = 2400;
-                        break;
-                    case 2:
-                        tf = 1800;
-                        break;
-                    case 3:
-                        tf = 1200;
-                        break;
-                }
-                mVibDrive = new AudioVibDriveContinuous(tf);
-                mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener()
-                {
-                    @Override
-                    public AudioVibDriveContinuous.VibInfo onNextVibration() {
-                        if(stimuli[trial][3] == 1)
-                            return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampstrong[stimuli[trial][2]], audiovolume);
-                        else
-                            return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampweak[stimuli[trial][2]], audiovolume);
+
+                if (trial < 56) {
+                    String str;
+                    if((resultarr[1] == resultarr[5]) && (resultarr[2] == resultarr[6]) && (resultarr[3] == resultarr[7]) && (resultarr[4] == resultarr[8])) {
+                        str = "Correct";
                     }
-                });
-                startThread();
+                    else {
+                        str = getCorrectFeedbackanswer();
+                    }
+                    MessageBox("Feedback", str);
+                }
+                //session finish: 2 min break;
+                else if (trial % 28 == 0) {
+                    MessageBox("Session break", "Please make a 2-min rest.");
+                }
+
+                trial = trial + 1;
+                trialTxt.setText("Trial: " + trial);
+                if(trial < numstimuli) {
+                    switch(stimuli[trial][1])   {
+                        case 0:
+                            tf = 3200;
+                            break;
+                        case 1:
+                            tf = 2400;
+                            break;
+                        case 2:
+                            tf = 1800;
+                            break;
+                        case 3:
+                            tf = 1200;
+                            break;
+                    }
+                    mVibDrive = new AudioVibDriveContinuous(tf);
+                    mVibDrive.setAudioData(audioData);
+                    mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener()
+                    {
+                        @Override
+                        public AudioVibDriveContinuous.VibInfo onNextVibration() {
+                            if(stimuli[trial][3] == 1)
+                                return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampstrong[stimuli[trial][2]], audiovolume);
+                            else
+                                return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampweak[stimuli[trial][2]], audiovolume);
+                        }
+                    });
+                    startThread();
+                }
+                //training: feedback
+
+                //finish
+                if (trial == numstimuli)    {
+                    //prevent error
+                    trial = trial - 1;
+
+                    for(int i = 0; i <numstimuli; i++) {
+                        int t[] = new int[8];
+                        t[0] = stimuli[i][0]; t[1] = stimuli[i][1]; t[2] = stimuli[i][2]; t[3] = stimuli[i][3];
+                        t[4] = results[i][0]; t[5] = results[i][1]; t[6] = results[i][2]; t[7] = results[i][3];
+                        mResultLogger.WriteArray(t, false, true);
+                    }
+                    setResult(RESULT_OK);
+                    finish();
+                    return;
+                }
+
+
+
 
             }
         });
@@ -297,6 +342,7 @@ public class Experiment2 extends AppCompatActivity {
             public void onClick(View v) {
                 if (trial > 1) {
                     trial = trial - 1;
+                    trialTxt.setText("Trial: " + trial);
                     //setting back the selections
                 } else {
                     MessageBox("Error", "This is the first trial!");
@@ -366,7 +412,7 @@ public class Experiment2 extends AppCompatActivity {
     }
     private void stimuliCreate()    {
         //pick random
-        int numtraining = 24;
+        int numtraining = 56;
         int[] numoflevels = {7, 4, 6, 2}; //np, pr, fr, amp
         for (int i = 0; i < numtraining; i++) {
             stimuli[i][0] = (int) (Math.random() * numoflevels[0]) + 1;

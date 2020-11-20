@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ public class StartActivity extends AppCompatActivity {
     protected int request_famil_Code = 1002;
     protected int request_exp1_Code = 1003;
     protected int request_fileload_Code = 1004;
+    protected int request_exp2_Code = 1005;
 
     protected int[] ampweak = {33, 33, 33, 33, 33, 33};
     protected int[] ampstrong = {66, 66, 66, 66, 66, 66};
@@ -105,7 +108,7 @@ public class StartActivity extends AppCompatActivity {
                 intent.putExtra("ampstrong", ampstrong);
                 intent.putExtra("audiovolume", audiovolume);
                 intent.putExtra("audiodata", audiodata);
-                startActivity(intent);
+                startActivityForResult(intent, request_exp2_Code);
             }
         });
 
@@ -172,7 +175,7 @@ public class StartActivity extends AppCompatActivity {
                 exp1Button.setEnabled(true);
             } else if (requestCode == request_exp1_Code) {
                 //exp2Button.setEnabled(true);
-                Toast.makeText(this.getApplicationContext(),"Finished 1st day", Toast.LENGTH_LONG);
+                MessageBox("Experiment", "Finished 1st day. Thank you.");
 
             } else if(requestCode == request_fileload_Code) {
                 userID = intent.getExtras().getInt("id");
@@ -182,9 +185,27 @@ public class StartActivity extends AppCompatActivity {
                 exp2Button.setEnabled(true);
                 TextView uidView = findViewById(R.id.txtIDView);
                 uidView.setText("user ID: " + userID);
+            } else if (requestCode == request_exp2_Code) {
+                //exp2Button.setEnabled(true);
+                MessageBox("Experiment", "It's all set. Thank you for your participation.");
+
             }
 
         }
         super.onActivityResult(requestCode, resultCode, intent);
+    }
+
+    private void MessageBox(String title, String str) {
+        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+        dlgAlert.setMessage(str);
+        dlgAlert.setTitle(title);
+        dlgAlert.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        //dismiss the dialog
+                    }
+                });
+
+        dlgAlert.create().show();
     }
 }

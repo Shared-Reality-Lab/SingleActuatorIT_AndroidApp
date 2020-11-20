@@ -38,7 +38,7 @@ public class Experiment1 extends AppCompatActivity {
     protected AudioVibDriveContinuous mVibDrive;
     protected AudioVibDriveContinuous.OnNextDriveListener mNextVib;
     public static int SAMPLING_RATE = 12000;
-
+    Intent resintent;
     //1 : numerosity, 2: period, 3: freq, 4: amp
     protected int[][] experimentalorder = {{0,1,2,3}, {1,0,3,2}, {2,3,0,1}, {3,2,1,0}};
     protected int[] numoftraining = {14,8,12,4};
@@ -54,6 +54,7 @@ public class Experiment1 extends AppCompatActivity {
     protected int phase;
     int latin;
     protected short[] audioData;
+    protected boolean istouched;
 
     RadioGroup npgroup, prgroup, frgroup, ampgroup;
     Logger mLogger;
@@ -68,7 +69,7 @@ public class Experiment1 extends AppCompatActivity {
 
         final TextView userTxt = findViewById(R.id.exp1_txtIDView);
         final TextView trialTxt = findViewById(R.id.exp1_txtTrialView);
-        Button nextButton = findViewById(R.id.exp1_NextButton);
+        final Button nextButton = findViewById(R.id.exp1_NextButton);
         Button previousButton = findViewById(R.id.exp1_btPrev);
         Button pauseButton = findViewById(R.id.exp1_btPause);
         npgroup = findViewById(R.id.exp1_npRadioGroup);
@@ -89,7 +90,7 @@ public class Experiment1 extends AppCompatActivity {
         String time1 = sdf.format(time);
         String logPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/log/" + userID +"_Log_Exp1" + time1 + ".txt";
         mLogger = new Logger(logPath, getApplicationContext());
-        String resultPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/log/" + userID +"_Result_Exp1" + time1 + ".txt";
+        String resultPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/result/" + userID +"_Result_Exp1" + time1 + ".txt";
         mResultLogger = new Logger(resultPath, getApplicationContext());
 
         //stimuli cond. init.
@@ -162,6 +163,10 @@ public class Experiment1 extends AppCompatActivity {
                         np = 1;
                         break;
                 }
+                if(istouched == false)  {
+                    istouched = true;
+                    nextButton.setEnabled(true);
+                }
                 mLogger.WriteMessage("Number\t"+ np, true);
             }
         });
@@ -185,6 +190,10 @@ public class Experiment1 extends AppCompatActivity {
                         pr = 0;
                         tf = 3200;
                         break;
+                }
+                if(istouched == false)  {
+                    istouched = true;
+                    nextButton.setEnabled(true);
                 }
                 mLogger.WriteMessage("Period\t"+ pr, true);
             }
@@ -212,6 +221,10 @@ public class Experiment1 extends AppCompatActivity {
                         fr = 0;
                         break;
                 }
+                if(istouched == false)  {
+                    istouched = true;
+                    nextButton.setEnabled(true);
+                }
                 mLogger.WriteMessage("Frequency\t"+ fr, true);
             }
         });
@@ -226,6 +239,10 @@ public class Experiment1 extends AppCompatActivity {
                         amp = 0;
                         break;
                 }
+                if(istouched == false)  {
+                    istouched = true;
+                    nextButton.setEnabled(true);
+                }
                 mLogger.WriteMessage("Amplitude\t"+ amp, true);
             }
         });
@@ -235,6 +252,9 @@ public class Experiment1 extends AppCompatActivity {
             public void onClick(View v) {
                 //if it is a training session, output feedback
                 //results[trial] = new int[]{np, pr, fr, amp};
+                istouched = false;
+                nextButton.setEnabled(false);
+
                 int answer = 0;
                 int t = experimentalorder[latin][phase];
                 switch (t) {
@@ -254,6 +274,15 @@ public class Experiment1 extends AppCompatActivity {
                         throw new IllegalStateException("Unexpected value: " + t);
                 }
 
+                //current output;
+                results[trial][0] = experimentalorder[latin][phase]; //type
+                results[trial][1] = stimuli[trial][t]; // correct answer
+                results[trial][2] = answer; // user's answer
+                Log.e("result", "" + results[trial][0] + results[trial][1] + results[trial][2]);
+                String LoggerString = "Trial: " + trial + " Stimuli: " + stimuli[trial][phase] + " Answer :" + answer + "\n";
+                mLogger.WriteMessage(LoggerString, true);
+
+
                 if (isTrainingTrial(trial, phase)) {
                     int correctanswer = stimuli[trial][t];
                     if (answer == correctanswer) {
@@ -265,27 +294,56 @@ public class Experiment1 extends AppCompatActivity {
                         MessageBox("Feedback", "The correct answer is " + ansstr);
                     }
                 }
-                results[trial][0] = experimentalorder[latin][phase]; //type
-                results[trial][1] = stimuli[trial][t]; // correct answer
-                results[trial][2] = answer; // user's answer
-                Log.e("result", "" + results[trial][0] + results[trial][1] + results[trial][2]);
                 trial = trial + 1;
                 trialTxt.setText("Trial: " + trial);
-
-                String LoggerString = "Trial: " + trial + " Stimuli: " + stimuli[trial][phase] + " Answer :" + answer + "\n";
-                mLogger.WriteMessage(LoggerString, true);
-                //finish
-                if(trial == numstimuli)    {
-                    MessageBox("Finish", "Experiment 1 done. Thank you and see you tomorrow!");
+                if(trial < numstimuli) {
+                    switch(stimuli[trial][1])   {
+                        case 0:
+                            tf = 3200;
+                            break;
+                        case 1:
+                            tf = 2400;
+                            break;
+                        case 2:
+                            tf = 1800;
+                            break;
+                        case 3:
+                            tf = 1200;
+                            break;
+                    }
                     endThread();
+                    mVibDrive = new AudioVibDriveContinuous(tf);
+                    mVibDrive.setAudioData(audioData);
+                    startThread();
+                    mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
+                        public AudioVibDriveContinuous.VibInfo onNextVibration() {
+                            if(stimuli[trial][3] == 1)
+                                return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampstrong[stimuli[trial][2]], audiovolume);
+                            else
+                                return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampweak[stimuli[trial][2]], audiovolume);
+                        }
+                    });
+                    //re-init vars for the next trial.
+                    Log.e("Answer", ""+stimuli[trial][0] + stimuli[trial][1] +  stimuli[trial][2] +  stimuli[trial][3]);
+                    Log.e("trial", Integer.toString(trial));
+                }
+                else{
+                    //finish
+                    //prevent error
+                    trial = trial - 1;
+                    endThread();
+                    Toast.makeText(getApplicationContext(),"Experiment 1 done. Thank you and see you tomorrow!", Toast.LENGTH_LONG);
                     //File summary output
                     for(int i = 0; i <numstimuli; i++) {
                         mResultLogger.WriteArray(results[i], false, true);
                     }
-                    Intent resintent = new Intent();
-                    setResult(RESULT_OK, resintent);
+
+                    //resintent = new Intent();
+                    setResult(RESULT_OK);
                     finish();
+                    return;
                 }
+                //conditions
                 //phase up
                 if(trial == phasesum[phase+1]) {
                     MessageBox("Session done", "Session done. Please take a 2-minute rest.");
@@ -293,39 +351,11 @@ public class Experiment1 extends AppCompatActivity {
                     hideRadioGroups(experimentalorder[latin][phase]);
                 }
                 //mandatory break
-                if(trial == mandatoryBreak[phase])  {
+                else if(trial == mandatoryBreak[phase])  {
                     MessageBox("Mandatory break", "Please take a 2-minute rest.");
-                    //phase++;
-                    //hideRadioGroups(phase);
                 }
-                switch(stimuli[trial][1])   {
-                    case 0:
-                        tf = 3200;
-                        break;
-                    case 1:
-                        tf = 2400;
-                        break;
-                    case 2:
-                        tf = 1800;
-                        break;
-                    case 3:
-                        tf = 1200;
-                        break;
-                }
-                endThread();
-                mVibDrive = new AudioVibDriveContinuous(tf);
-                mVibDrive.setAudioData(audioData);
-                startThread();
-                mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
-                    public AudioVibDriveContinuous.VibInfo onNextVibration() {
-                        if(stimuli[trial][3] == 1)
-                            return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampstrong[stimuli[trial][2]], audiovolume);
-                        else
-                            return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampweak[stimuli[trial][2]], audiovolume);
-                    }
-                });
-                //re-init vars for the next trial.
-                Log.e("Answer", ""+stimuli[trial][0] + stimuli[trial][1] +  stimuli[trial][2] +  stimuli[trial][3]);
+
+
                 //Toast.makeText(getApplicationContext(), Integer.toString(trial), Toast.LENGTH_SHORT).show();
                 //+Integer.toString(np)+Integer.toString(pr)+Integer.toString(fr)+Integer.toString(amp)
             }
@@ -336,6 +366,7 @@ public class Experiment1 extends AppCompatActivity {
             public void onClick(View v) {
                 if (trial > 1)  {
                     trial = trial - 1;
+                    trialTxt.setText("Trial: " + trial);
                     //setting back the selections
                 }
                 else {
@@ -543,7 +574,7 @@ public class Experiment1 extends AppCompatActivity {
                 }
             }
             //randomization
-            /*int rcount = count - numoftraining[t];
+            int rcount = count - numoftraining[t];
             for(int j = 0; j < numoftraining[t]; j++)    {
                 int r = (int) (random() * numoftraining[t]);
                 if (r == j) {
@@ -555,7 +586,7 @@ public class Experiment1 extends AppCompatActivity {
                 stimuli[rcount+r] = stimuli[rcount+j];
                 stimuli[rcount+j] = temp;
                 //rcount = rcount + 1;
-            }*/
+            }
             //main stimuli
             for(int j = 0; j < (numoflevels[t]*numoflevels[t]); j++)    {
                 switch (t) {
@@ -589,7 +620,7 @@ public class Experiment1 extends AppCompatActivity {
                         break;
                 }
             }
-            /*rcount = count - numoflevels[t]*numoflevels[t];
+            rcount = count - numoflevels[t]*numoflevels[t];
             for(int j = 0; j < (numoflevels[t]*numoflevels[t]); j++)    {
                 int r = (int) (random() * (numoflevels[t]*numoflevels[t]));
                 if (r == j) {
@@ -601,7 +632,7 @@ public class Experiment1 extends AppCompatActivity {
                 stimuli[rcount+r] = stimuli[rcount+j];
                 stimuli[rcount+j] = temp;
                 //rcount = rcount + 1;
-            }*/
+            }
             if(breaktimes[t] != 0) mandatoryBreak[i] = phasesum[i] + breaktimes[t];
             phasesum[i+1] = count;
         }

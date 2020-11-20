@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SingleActuatorIT</string>
+    <string name="app_name">Experiment</string>
 
     <string name="fr">Frequency</string>
     <string name="amp">Amplitude</string>

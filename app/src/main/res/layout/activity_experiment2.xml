@@ -103,6 +103,7 @@
                 android:id="@+id/exp2_prVerySlow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="@string/veryslow" />
         </RadioGroup>
 
@@ -150,6 +151,7 @@
                 android:id="@+id/exp2_frLowChord"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="@string/lowchord" />
         </RadioGroup>
 
@@ -173,6 +175,7 @@
                 android:id="@+id/exp2_ampWeak"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="@string/weak" />
         </RadioGroup>
 
@@ -226,6 +229,7 @@
                 android:id="@+id/exp2_np1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="1" />
         </RadioGroup>
 
@@ -235,7 +239,8 @@
         android:id="@+id/exp2_NextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="60dp"
+        android:enabled="false"
         android:text="@string/next"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
