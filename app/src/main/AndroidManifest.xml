@@ -11,8 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Experiment2"></activity>
-        <activity android:name=".Experiment1" />
+        <activity android:name=".Experiment2_1"></activity>
+        <activity android:name=".Experiment1_1" />
+        <activity android:name=".Experiment1_2" />
+        <activity android:name=".Experiment2_2" />
         <activity android:name=".Familization" />
         <activity android:name=".Calibration" />
         <activity android:name=".LoadFile" />

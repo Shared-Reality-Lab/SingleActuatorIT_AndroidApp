@@ -28,17 +28,24 @@ import ca.mcgill.srl.audioVibDrive.AudioVibDriveContinuous;
 import static java.lang.Thread.sleep;
 
 public class Familization extends AppCompatActivity {
-    protected int[] ampweak;
-    protected int[] ampstrong;
+    protected int ampweak;
+    protected int ampstrong;
+    protected int[] eqweak;
+    protected int[] eqstrong;
     protected int audiovolume;
-    protected int np = 4, pr = 2, fr = 2, amp = 1;
-    protected int tf = 1800;
+    protected int np = 4, pr = 1, fr = 1, amp = 1;
+    protected int tf = 2000;
     protected short[] audiodata;
     private Thread mVibThread = null;
     protected AudioVibDriveContinuous mVibDrive;
 
     int userID;
     TextView userTxt;
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
 
     private void startThread()  {
         if (mVibThread == null) {
@@ -82,25 +89,26 @@ public class Familization extends AppCompatActivity {
 
 
         Button doneButton = findViewById(R.id.doneButton);
-        userID = intent.getExtras().getInt("id");
-        ampweak = intent.getExtras().getIntArray("ampweak");
-        ampstrong = intent.getExtras().getIntArray("ampstrong");
-        audiovolume = intent.getExtras().getInt("audiovolume");
+        ampweak = intent.getExtras().getInt("ampweak");
+        ampstrong = intent.getExtras().getInt("ampstrong");
+        eqweak = intent.getExtras().getIntArray("eqweak");
+        eqstrong = intent.getExtras().getIntArray("eqstrong");
         audiodata = intent.getExtras().getShortArray("audiodata");
-        Log.e ("volumes", Integer.toString(audiovolume));
+        audiovolume = intent.getExtras().getInt("audiovolume");
 
-        userTxt = findViewById(R.id.famil_txtIDView);
-        final String str = "UserID="+ userID;
-        userTxt.setText(str);
+
+        //initial condition
 
         mVibDrive = new AudioVibDriveContinuous(tf);
         mVibDrive.setAudioData(audiodata);
+        mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
         mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
             @Override
             public AudioVibDriveContinuous.VibInfo onNextVibration() {
-                return new AudioVibDriveContinuous.VibInfo(4, 2, ampstrong[2], audiovolume);
+                return new AudioVibDriveContinuous.VibInfo(np, fr, amp, audiovolume);
             }
         });
+
         npgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -130,8 +138,7 @@ public class Familization extends AppCompatActivity {
                 mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
                     @Override
                     public AudioVibDriveContinuous.VibInfo onNextVibration() {
-                        if (amp == 1) return new AudioVibDriveContinuous.VibInfo(np, fr, ampstrong[fr], audiovolume);
-                        else return new AudioVibDriveContinuous.VibInfo(np, fr, ampweak[fr], audiovolume);
+                       return new AudioVibDriveContinuous.VibInfo(np, fr, amp, audiovolume);
                     }
                 });
                 //Toast.makeText(getApplicationContext(), Integer.toString(np)+ pr + fr + amp, Toast.LENGTH_SHORT).show();
@@ -143,32 +150,28 @@ public class Familization extends AppCompatActivity {
                 switch(checkedId) {
                     case R.id.famil_prFast:
                         pr = 3;
-                        tf = 1200;
+                        tf = 1000;
                         break;
                     case R.id.famil_prModerate:
                         pr = 2;
-                        tf = 1800;
+                        tf = 2000;
                         break;
                     case R.id.famil_prSlow:
                         pr = 1;
-                        tf = 2400;
-                        break;
-                    case R.id.famil_prVerySlow:
-                        pr = 0;
-                        tf = 3200;
+                        tf = 3000;
                         break;
                 }
                 endThread();
                 mVibDrive = new AudioVibDriveContinuous(tf);
                 mVibDrive.setAudioData(audiodata);
-                startThread();
+                mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
                 mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
                     @Override
                     public AudioVibDriveContinuous.VibInfo onNextVibration() {
-                        if (amp == 1) return new AudioVibDriveContinuous.VibInfo(np, fr, ampstrong[fr], audiovolume);
-                        else return new AudioVibDriveContinuous.VibInfo(np, fr, ampweak[fr], audiovolume);
+                        return new AudioVibDriveContinuous.VibInfo(np, fr, amp, audiovolume);
                     }
                 });
+                startThread();
                 //Toast.makeText(getApplicationContext(), Integer.toString(np)+ pr + fr + amp, Toast.LENGTH_SHORT).show();
             }
         });
@@ -176,30 +179,20 @@ public class Familization extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch(checkedId) {
-                    case R.id.famil_frHighChord:
-                        fr = 5;
-                        break;
-                    case R.id.famil_frVeryHigh:
-                        fr = 4;
-                        break;
                     case R.id.famil_frHigh:
-                        fr = 3;
-                        break;
-                    case R.id.famil_frMid:
                         fr = 2;
                         break;
-                    case R.id.famil_frLow:
+                    case R.id.famil_frMid:
                         fr = 1;
                         break;
-                    case R.id.famil_frLowChord:
+                    case R.id.famil_frLow:
                         fr = 0;
                         break;
                 }
                 mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
                     @Override
                     public AudioVibDriveContinuous.VibInfo onNextVibration() {
-                        if (amp == 1) return new AudioVibDriveContinuous.VibInfo(np, fr, ampstrong[fr], audiovolume);
-                        else return new AudioVibDriveContinuous.VibInfo(np, fr, ampweak[fr], audiovolume);
+                        return new AudioVibDriveContinuous.VibInfo(np, fr, amp, audiovolume);
                     }
                 });
                 //Toast.makeText(getApplicationContext(), Integer.toString(np)+ pr + fr + amp, Toast.LENGTH_SHORT).show();
@@ -219,8 +212,7 @@ public class Familization extends AppCompatActivity {
                 mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
                     @Override
                     public AudioVibDriveContinuous.VibInfo onNextVibration() {
-                        if (amp == 1) return new AudioVibDriveContinuous.VibInfo(np, fr, ampstrong[fr], audiovolume);
-                        else return new AudioVibDriveContinuous.VibInfo(np, fr, ampweak[fr], audiovolume);
+                        return new AudioVibDriveContinuous.VibInfo(np, fr, amp, audiovolume);
                     }
                 });
                 //Toast.makeText(getApplicationContext(), Integer.toString(np)+ pr + fr + amp, Toast.LENGTH_SHORT).show();

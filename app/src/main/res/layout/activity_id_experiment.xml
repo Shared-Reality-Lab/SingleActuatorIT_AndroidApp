@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Experiment2">
+    tools:context=".Experiment2_1">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="wrap_content"
@@ -13,44 +14,35 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.346">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/frtextView"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="10dp"
             android:text="@string/fr"
-            app:layout_constraintBottom_toTopOf="@+id/exp2_frRadioGroup"
             app:layout_constraintEnd_toStartOf="@+id/amptextView"
             app:layout_constraintStart_toEndOf="@+id/nptextView"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/amptextView"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="10dp"
             android:text="@string/amp"
-            app:layout_constraintBottom_toTopOf="@+id/exp2_ampRadioGroup"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/frtextView"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/nptextView"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
             android:text="@string/np"
@@ -61,22 +53,23 @@
 
         <TextView
             android:id="@+id/prtextView"
-            android:layout_width="wrap_content"
+            android:layout_width="90dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/pr"
+            android:layout_marginStart="20dp"
+            android:text="Signal Period"
             app:layout_constraintEnd_toStartOf="@+id/nptextView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <RadioGroup
             android:id="@+id/exp2_prRadioGroup"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="50dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/npRadioGroup"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/prtextView">
@@ -99,35 +92,20 @@
                 android:layout_height="wrap_content"
                 android:text="@string/slow" />
 
-            <RadioButton
-                android:id="@+id/exp2_prVerySlow"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/veryslow" />
         </RadioGroup>
 
         <RadioGroup
             android:id="@+id/exp2_frRadioGroup"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/exp2_ampRadioGroup"
-            app:layout_constraintStart_toStartOf="@id/frtextView"
+            app:layout_constraintStart_toEndOf="@+id/exp2_npRadioGroup"
             app:layout_constraintTop_toBottomOf="@id/frtextView">
-
-            <RadioButton
-                android:id="@+id/exp2_frHighChord"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/highchord" />
-
-            <RadioButton
-                android:id="@+id/exp2_frVeryHigh"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/veryhigh" />
 
             <RadioButton
                 android:id="@+id/exp2_frHigh"
@@ -147,20 +125,16 @@
                 android:layout_height="wrap_content"
                 android:text="@string/low" />
 
-            <RadioButton
-                android:id="@+id/exp2_frLowChord"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/lowchord" />
         </RadioGroup>
 
         <RadioGroup
             android:id="@+id/exp2_ampRadioGroup"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/amptextView"
             app:layout_constraintTop_toBottomOf="@id/amptextView">
@@ -181,12 +155,15 @@
 
         <RadioGroup
             android:id="@+id/exp2_npRadioGroup"
-            android:layout_width="75dp"
+            android:layout_width="80dp"
             android:layout_height="221dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/exp2_frRadioGroup"
-            app:layout_constraintStart_toEndOf="@+id/prRadioGroup"
+            app:layout_constraintStart_toEndOf="@+id/exp2_prRadioGroup"
             app:layout_constraintTop_toBottomOf="@+id/nptextView">
 
             <RadioButton
@@ -261,23 +238,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/exp2_btPrev"
-        android:layout_width="105dp"
-        android:layout_height="39dp"
-        android:text="@string/prev"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/exp2_btPause"
-        android:layout_width="120dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="24dp"
-        android:text="@string/pause"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <TextView
         android:id="@+id/exp2_txtTrialView"
         android:layout_width="100dp"
@@ -292,5 +252,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/exp2_txtIDView"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/exp2_playvib"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="Play Vibration"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exp2_txtIDView" />
+
+    <Button
+        android:id="@+id/exp2_pauseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="24dp"
+        android:text="Pause"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

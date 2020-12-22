@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Experiment1">
+    tools:context=".Experiment1_1">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="wrap_content"
@@ -25,9 +25,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
             android:text="@string/fr"
-            app:layout_constraintBottom_toTopOf="@+id/calib_frRadioGroup"
             app:layout_constraintEnd_toStartOf="@+id/amptextView"
             app:layout_constraintStart_toEndOf="@+id/nptextView"
             app:layout_constraintTop_toTopOf="parent" />
@@ -38,9 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
             android:text="@string/amp"
-            app:layout_constraintBottom_toTopOf="@+id/calib_ampRadioGroup"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/frtextView"
             app:layout_constraintTop_toTopOf="parent" />
@@ -52,9 +48,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
             android:text="@string/np"
-            app:layout_constraintBottom_toTopOf="@+id/npRadioGroup"
             app:layout_constraintEnd_toStartOf="@+id/frtextView"
             app:layout_constraintStart_toEndOf="@+id/prtextView"
             app:layout_constraintTop_toTopOf="parent" />
@@ -75,8 +69,10 @@
             android:id="@+id/exp1_prRadioGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="50dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/npRadioGroup"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/prtextView">
@@ -99,35 +95,20 @@
                 android:layout_height="wrap_content"
                 android:text="@string/slow" />
 
-            <RadioButton
-                android:id="@+id/exp1_prVerySlow"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/veryslow" />
         </RadioGroup>
 
         <RadioGroup
             android:id="@+id/exp1_frRadioGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="24dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/exp1_ampRadioGroup"
-            app:layout_constraintStart_toStartOf="@id/frtextView"
+            app:layout_constraintStart_toEndOf="@+id/exp1_npRadioGroup"
             app:layout_constraintTop_toBottomOf="@id/frtextView">
-
-            <RadioButton
-                android:id="@+id/exp1_frHighChord"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/highchord" />
-
-            <RadioButton
-                android:id="@+id/exp1_frVeryHigh"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/veryhigh" />
 
             <RadioButton
                 android:id="@+id/exp1_frHigh"
@@ -147,12 +128,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/low" />
 
-            <RadioButton
-                android:id="@+id/exp1_frLowChord"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/lowchord" />
         </RadioGroup>
 
         <RadioGroup
@@ -161,6 +136,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/amptextView"
             app:layout_constraintTop_toBottomOf="@id/amptextView">
@@ -183,8 +160,11 @@
             android:id="@+id/exp1_npRadioGroup"
             android:layout_width="75dp"
             android:layout_height="221dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/exp1_frRadioGroup"
             app:layout_constraintStart_toEndOf="@+id/exp1_prRadioGroup"
             app:layout_constraintTop_toBottomOf="@+id/nptextView">

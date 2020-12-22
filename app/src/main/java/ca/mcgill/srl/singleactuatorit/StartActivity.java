@@ -10,11 +10,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,22 +24,28 @@ public class StartActivity extends AppCompatActivity {
     protected int userID = -1;
     protected int request_calib_Code = 1001;
     protected int request_famil_Code = 1002;
-    protected int request_exp1_Code = 1003;
+    protected int request_exp1_1_Code = 1003;
     protected int request_fileload_Code = 1004;
-    protected int request_exp2_Code = 1005;
+    protected int request_exp2_1_Code = 1005;
+    protected int request_exp1_2_Code = 1005;
+    protected int request_exp2_2_Code = 1005;
 
-    protected int[] ampweak = {33, 33, 33, 33, 33, 33};
-    protected int[] ampstrong = {66, 66, 66, 66, 66, 66};
+    int[] eqweak = {25, 30, 35};
+    int[] eqstrong = {55, 60, 75};
+    int ampweak = 40;
+    int ampstrong = 70;
     protected int audiovolume = 50;
     protected short[] audiodata;
     protected Button exp1Button;
     protected Button exp2Button;
+    protected Button exp1_2Button;
+    protected Button exp2_2Button;
     protected Button calibrationButton;
     protected Button familButton;
     protected Button loadButton;
 
     final int SAMPLING_RATE = 12000;
-    final int LONGEST_TIME_FRAME = 3200;
+    final int LONGEST_TIME_FRAME = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,13 +90,15 @@ public class StartActivity extends AppCompatActivity {
         {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Experiment1.class);
+                Intent intent = new Intent(getApplicationContext(), Experiment1_1.class);
                 intent.putExtra("id", userID);
                 intent.putExtra("ampweak", ampweak);
                 intent.putExtra("ampstrong", ampstrong);
+                intent.putExtra("eqweak", eqweak);
+                intent.putExtra("eqstrong", eqstrong);
                 intent.putExtra("audiovolume", audiovolume);
                 intent.putExtra("audiodata", audiodata);
-                startActivityForResult(intent, request_exp1_Code);
+                startActivityForResult(intent, request_exp1_1_Code);
             }
         });
 
@@ -102,13 +108,50 @@ public class StartActivity extends AppCompatActivity {
         {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Experiment2.class);
+                Intent intent = new Intent(getApplicationContext(), Experiment2_1.class);
                 intent.putExtra("id", userID);
                 intent.putExtra("ampweak", ampweak);
                 intent.putExtra("ampstrong", ampstrong);
+                intent.putExtra("eqweak", eqweak);
+                intent.putExtra("eqstrong", eqstrong);
                 intent.putExtra("audiovolume", audiovolume);
                 intent.putExtra("audiodata", audiodata);
-                startActivityForResult(intent, request_exp2_Code);
+                startActivityForResult(intent, request_exp2_1_Code);
+            }
+        });
+
+        exp1_2Button = findViewById(R.id.exp12Button);
+        //exp1_2Button.setEnabled(false);
+        exp1_2Button.setOnClickListener(new Button.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), Experiment1_2.class);
+                intent.putExtra("id", userID);
+                intent.putExtra("ampweak", ampweak);
+                intent.putExtra("ampstrong", ampstrong);
+                intent.putExtra("eqweak", eqweak);
+                intent.putExtra("eqstrong", eqstrong);
+                intent.putExtra("audiovolume", audiovolume);
+                intent.putExtra("audiodata", audiodata);
+                startActivityForResult(intent, request_exp1_2_Code);
+            }
+        });
+        exp2_2Button = findViewById(R.id.exp22Button);
+        //exp2_2Button.setEnabled(false);
+        exp2_2Button.setOnClickListener(new Button.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), Experiment2_2.class);
+                intent.putExtra("id", userID);
+                intent.putExtra("ampweak", ampweak);
+                intent.putExtra("ampstrong", ampstrong);
+                intent.putExtra("eqweak", eqweak);
+                intent.putExtra("eqstrong", eqstrong);
+                intent.putExtra("audiovolume", audiovolume);
+                intent.putExtra("audiodata", audiodata);
+                startActivityForResult(intent, request_exp2_2_Code);
             }
         });
 
@@ -122,6 +165,8 @@ public class StartActivity extends AppCompatActivity {
                 intent.putExtra("id", userID);
                 intent.putExtra("ampweak", ampweak);
                 intent.putExtra("ampstrong", ampstrong);
+                intent.putExtra("eqweak", eqweak);
+                intent.putExtra("eqstrong", eqstrong);
                 intent.putExtra("audiovolume", audiovolume);
                 intent.putExtra("audiodata", audiodata);
                 startActivityForResult(intent, request_calib_Code);
@@ -138,6 +183,8 @@ public class StartActivity extends AppCompatActivity {
                 intent.putExtra("id", userID);
                 intent.putExtra("ampweak", ampweak);
                 intent.putExtra("ampstrong", ampstrong);
+                intent.putExtra("eqweak", eqweak);
+                intent.putExtra("eqstrong", eqstrong);
                 intent.putExtra("audiovolume", audiovolume);
                 intent.putExtra("audiodata", audiodata);
                 startActivityForResult(intent, request_famil_Code);
@@ -163,8 +210,10 @@ public class StartActivity extends AppCompatActivity {
         if(resultCode == RESULT_OK) {
             if (requestCode == request_calib_Code) {
                 userID = intent.getExtras().getInt("id");
-                ampweak = intent.getExtras().getIntArray("ampweak");
-                ampstrong = intent.getExtras().getIntArray("ampstrong");
+                ampweak = intent.getExtras().getInt("ampweak");
+                ampstrong = intent.getExtras().getInt("ampstrong");
+                eqweak = intent.getExtras().getIntArray("eqweak");
+                eqstrong = intent.getExtras().getIntArray("eqstrong");
                 audiovolume = intent.getExtras().getInt("audiovolume");
                 TextView uidView = findViewById(R.id.txtIDView);
                 uidView.setText("user ID: " + userID);
@@ -173,22 +222,34 @@ public class StartActivity extends AppCompatActivity {
                 }
             } else if (requestCode == request_famil_Code) {
                 exp1Button.setEnabled(true);
-            } else if (requestCode == request_exp1_Code) {
+            } else if (requestCode == request_exp1_2_Code) {
                 //exp2Button.setEnabled(true);
                 MessageBox("Experiment", "Finished 1st day. Thank you.");
 
-            } else if(requestCode == request_fileload_Code) {
+            }
+            else if (requestCode == request_exp1_1_Code) {
+                MessageBox("Experiment", "Click Experiment1-2 button to continue. Thank you.");
+                exp1_2Button.setEnabled(true);
+            }
+            else if(requestCode == request_fileload_Code) {
                 userID = intent.getExtras().getInt("id");
-                ampweak = intent.getExtras().getIntArray("ampweak");
-                ampstrong = intent.getExtras().getIntArray("ampstrong");
+                ampweak = intent.getExtras().getInt("ampweak");
+                ampstrong = intent.getExtras().getInt("ampstrong");
+                eqweak = intent.getExtras().getIntArray("eqweak");
+                eqstrong = intent.getExtras().getIntArray("eqstrong");
                 audiovolume = intent.getExtras().getInt("audiovolume");
                 exp2Button.setEnabled(true);
+                familButton.setEnabled(true);
                 TextView uidView = findViewById(R.id.txtIDView);
                 uidView.setText("user ID: " + userID);
-            } else if (requestCode == request_exp2_Code) {
+                MessageBox("Experiment", "Click Familiarization to review your vibration sets for the experiment. Thank you.");
+            }else if (requestCode == request_exp2_1_Code) {
+                exp2_2Button.setEnabled(true);
+                MessageBox("Experiment", "Click Experiment2-2 button to continue. Thank you.");
+            }
+            else if (requestCode == request_exp2_2_Code) {
                 //exp2Button.setEnabled(true);
                 MessageBox("Experiment", "It's all set. Thank you for your participation.");
-
             }
 
         }

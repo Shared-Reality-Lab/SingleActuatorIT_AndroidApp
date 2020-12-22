@@ -1,12 +1,8 @@
 package ca.mcgill.srl.singleactuatorit;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -16,30 +12,31 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.Date;
+import android.widget.ToggleButton;
 
 import ca.mcgill.srl.audioVibDrive.AudioVibDriveContinuous;
 
 public class Calibration extends AppCompatActivity {
 
-    protected int[] ampweak = {33, 33, 33, 33, 33, 33};
-    protected int[] ampstrong = {66, 66, 66, 66, 66, 66};
-    protected int audiovolume = 50;
-    protected int currentfr = 2;
+    int[] eqweak = {25, 30, 35};
+    int[] eqstrong = {55, 60, 75};
+    int ampweak = 40;
+    int ampstrong = 70;
+    int audiovolume = 50;
+    short[] audiodata;
+    protected int currentfr = 1;
+    protected int currentnp = 4;
+    protected int currentamp = 0;
+    int tf = 2000;
     protected EditText userTxt;
     protected Logger mResultLogger;
     private Thread mVibThread = null;
     protected AudioVibDriveContinuous mVibDrive;
     public String rootPath;
-    public static int TIME_FRAME = 800;
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
 
     private void startThread()  {
         if (mVibThread == null) {
@@ -71,41 +68,99 @@ public class Calibration extends AppCompatActivity {
         rootPath = rootPath + "/singleit/calib/";
         //Toast.makeText(getApplicationContext(), rootPath, Toast.LENGTH_SHORT).show();
 
-        RadioGroup frgroup = findViewById(R.id.calib_frRadioGroup);
-        final RadioGroup ampgroup = findViewById(R.id.calib_ampRadioGroup);
 
-        final RadioButton frHighChordRadio = findViewById(R.id.calib_frHighChord);
-        final RadioButton frVeryHighRadio = findViewById(R.id.calib_frVeryHigh);
-        final RadioButton frHighRadio = findViewById(R.id.calib_frHigh);
-        final RadioButton frMidRadio = findViewById(R.id.calib_frMid);
-        final RadioButton frLowRadio = findViewById(R.id.calib_frLow);
+        final ToggleButton Highbutton = findViewById(R.id.calib_hightoggle);
+        final ToggleButton Midbutton = findViewById(R.id.calib_midtoggle);
+        Midbutton.setChecked(true);
+        final ToggleButton Lowbutton = findViewById(R.id.calib_lowtoggle);
 
-        final RadioButton ampStrRadio = findViewById(R.id.calib_ampStrong);
+        final SeekBar Highvol = findViewById(R.id.calib_highfreqvol);
+        final SeekBar Midvol = findViewById(R.id.calib_midfreqvol);
+        final SeekBar Lowvol = findViewById(R.id.calib_lowfreqvol);
+
+        final RadioButton ampWeakRadio = findViewById(R.id.calib_radioweak);
+        final RadioButton ampStrRadio = findViewById(R.id.calib_radiostrong);
+
+        final RadioGroup pulsespeed = findViewById(R.id.pulseSpeedRadioGroup);
+
+        final SeekBar Weakvol = findViewById(R.id.calib_weakvol);
+        final SeekBar Strongvol = findViewById(R.id.calib_strongvol);
 
         final SeekBar audioSlider = findViewById(R.id.calib_audioSeekbar);
         audioSlider.setProgress(audiovolume);
         userTxt = findViewById(R.id.userIdField);
-        final SeekBar slider = findViewById(R.id.calibrationSlider);
-        slider.setProgress(ampstrong[3]);
         Button confirmButton = findViewById(R.id.calib_confirmButton);
 
-
-        short[] audiodata;
         final int[] userID = {intent.getExtras().getInt("id")};
         userTxt.setText(Integer.toString(userID[0]));
-        ampweak = intent.getExtras().getIntArray("ampweak");
-        ampstrong = intent.getExtras().getIntArray("ampstrong");
+        ampweak = intent.getExtras().getInt("ampweak");
+        ampstrong = intent.getExtras().getInt("ampstrong");
+        eqweak = intent.getExtras().getIntArray("eqweak");
+        eqstrong = intent.getExtras().getIntArray("eqstrong");
         audiodata = intent.getExtras().getShortArray("audiodata");
+        audiovolume = intent.getExtras().getInt("audiovolume");
 
-        mVibDrive = new AudioVibDriveContinuous(TIME_FRAME);
+
+        //initial condition
+
+        mVibDrive = new AudioVibDriveContinuous(tf);
         mVibDrive.setAudioData(audiodata);
+        mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
+        Log.e("volumes", ampweak + " " + ampstrong);
         mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
             @Override
             public AudioVibDriveContinuous.VibInfo onNextVibration() {
-                if (ampStrRadio.isChecked()) {
-                    return new AudioVibDriveContinuous.VibInfo(currentfr, ampstrong[currentfr], audiovolume);
-                } else {
-                    return new AudioVibDriveContinuous.VibInfo(currentfr, ampweak[currentfr], audiovolume);
+                    return new AudioVibDriveContinuous.VibInfo(currentnp, currentfr, currentamp, audiovolume);
+            }
+        });
+        startThread();
+        pulsespeed.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch(checkedId)   {
+                    case R.id.calib_radioFast:
+                        tf = 1000;
+                        endThread();
+                        mVibDrive = new AudioVibDriveContinuous(tf);
+                        mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
+                        mVibDrive.setAudioData(audiodata);
+                        mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
+                            @Override
+                            public AudioVibDriveContinuous.VibInfo onNextVibration() {
+                                return new AudioVibDriveContinuous.VibInfo(currentnp, currentfr, currentamp, audiovolume);
+                            }
+                        });
+                        startThread();
+                        break;
+                    case R.id.calib_radioModerate:
+                        tf = 2000;
+                        endThread();
+                        mVibDrive = new AudioVibDriveContinuous(tf);
+                        mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
+                        mVibDrive.setAudioData(audiodata);
+                        mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
+                            @Override
+                            public AudioVibDriveContinuous.VibInfo onNextVibration() {
+                                return new AudioVibDriveContinuous.VibInfo(currentnp, currentfr, currentamp, audiovolume);
+                            }
+                        });
+                        startThread();
+                        break;
+                    case R.id.calib_radioSlow:
+                        tf = 3000;
+                        endThread();
+                        mVibDrive = new AudioVibDriveContinuous(tf);
+                        mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
+                        mVibDrive.setAudioData(audiodata);
+                        mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
+                            @Override
+                            public AudioVibDriveContinuous.VibInfo onNextVibration() {
+                                return new AudioVibDriveContinuous.VibInfo(currentnp, currentfr, currentamp, audiovolume);
+                            }
+                        });
+                        startThread();
+                        break;
+                    default:
                 }
             }
         });
@@ -115,99 +170,221 @@ public class Calibration extends AppCompatActivity {
             public void onClick(View v) {
                 //file write
                 int uID = Integer.parseInt(userTxt.getText().toString());
+                if (uID != -1) {
+                    rootPath = rootPath + "ID" + uID + ".txt";
+                    //Toast.makeText(getApplicationContext(), rootPath, Toast.LENGTH_SHORT).show();
+                    mResultLogger = new Logger(rootPath, getApplicationContext());
+                    mResultLogger.WriteMessage(Integer.toString(uID), false);
+                    mResultLogger.WriteMessage(Integer.toString(ampweak), false);
+                    mResultLogger.WriteMessage(Integer.toString(ampstrong), false);
+                    mResultLogger.WriteArray(eqweak, false, false);
+                    mResultLogger.WriteArray(eqstrong, false, false);
+                    mResultLogger.WriteMessage(Integer.toString(audiovolume), false);
+                    mResultLogger.Close();
 
-                rootPath = rootPath + "ID" + uID + ".txt";
-                //Toast.makeText(getApplicationContext(), rootPath, Toast.LENGTH_SHORT).show();
-                mResultLogger = new Logger(rootPath, getApplicationContext());
-                mResultLogger.WriteMessage(Integer.toString(uID), false);
-                mResultLogger.WriteArray(ampweak, false, false);
-                mResultLogger.WriteArray(ampstrong, false, false);
-                mResultLogger.WriteMessage(Integer.toString(audiovolume), false);
-                mResultLogger.Close();
 
+                    Intent resIntent = new Intent();
+                    //Toast.makeText(getApplicationContext(), userTxt.getText().toString(), Toast.LENGTH_SHORT).show();
 
+                    resIntent.putExtra("id", uID);
+                    resIntent.putExtra("ampweak", ampweak);
+                    resIntent.putExtra("ampstrong", ampstrong);
+                    resIntent.putExtra("eqweak", eqweak);
+                    resIntent.putExtra("eqstrong", eqstrong);
+                    resIntent.putExtra("audiovolume", audiovolume);
 
-                Intent resIntent = new Intent();
-                //Toast.makeText(getApplicationContext(), userTxt.getText().toString(), Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK, resIntent);
+                }
 
-                resIntent.putExtra("id", uID);
-                resIntent.putExtra("ampweak", ampweak);
-                resIntent.putExtra("ampstrong", ampstrong);
-                resIntent.putExtra("audiovolume", audiovolume);
-
-                setResult(RESULT_OK, resIntent);
                 endThread();
-
                 finish();
             }
         });
 
-        frgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        Highbutton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (frHighChordRadio.isChecked()) {
-                    currentfr = 5;
-                } else if (frVeryHighRadio.isChecked()) {
-                    currentfr = 4;
-                } else if (frHighRadio.isChecked()) {
-                    currentfr = 3;
-                } else if (frMidRadio.isChecked()) {
-                    currentfr = 2;
-                } else if (frLowRadio.isChecked()) {
-                    currentfr = 1;
-                } else {
-                    currentfr = 0;
-                }
-                if (ampStrRadio.isChecked()) {
-                    slider.setProgress(ampstrong[currentfr]);
-                } else {
-                    slider.setProgress(ampweak[currentfr]);
-                }
+            public void onClick(View v) {
+                Highbutton.setChecked(true);
+                Midbutton.setChecked(false);
+                Lowbutton.setChecked(false);
 
+                currentfr = 2;
+                mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
+                    @Override
+                    public AudioVibDriveContinuous.VibInfo onNextVibration() {
+                        return new AudioVibDriveContinuous.VibInfo(currentnp, currentfr, currentamp, audiovolume);
+                    }
+                });
             }
         });
-        ampgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        Midbutton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (frHighChordRadio.isChecked()) {
-                    currentfr = 5;
-                } else if (frVeryHighRadio.isChecked()) {
-                    currentfr = 4;
-                } else if (frHighRadio.isChecked()) {
-                    currentfr = 3;
-                } else if (frMidRadio.isChecked()) {
-                    currentfr = 2;
-                } else if (frLowRadio.isChecked()) {
-                    currentfr = 1;
-                } else {
-                    currentfr = 0;
-                }
-                if (ampStrRadio.isChecked()) {
-                    slider.setProgress(ampstrong[currentfr]);
-                } else {
-                    slider.setProgress(ampweak[currentfr]);
-                }
+            public void onClick(View v) {
+                Highbutton.setChecked(false);
+                Midbutton.setChecked(true);
+                Lowbutton.setChecked(false);
+                currentfr = 1;
+                mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
+                    @Override
+                    public AudioVibDriveContinuous.VibInfo onNextVibration() {
+                        return new AudioVibDriveContinuous.VibInfo(currentnp, currentfr, currentamp, audiovolume);
+                    }
+                });
             }
         });
-
-        slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        Lowbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Highbutton.setChecked(false);
+                Midbutton.setChecked(false);
+                Lowbutton.setChecked(true);
+                currentfr = 0;
+                mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
+                    @Override
+                    public AudioVibDriveContinuous.VibInfo onNextVibration() {
+                        return new AudioVibDriveContinuous.VibInfo(currentnp, currentfr, currentamp, audiovolume);
+                    }
+                });
+            }
+        });
+        ampStrRadio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Highvol.setProgress(eqstrong[2]);
+                Midvol.setProgress(eqstrong[1]);
+                Lowvol.setProgress(eqstrong[0]);
+                currentamp = 1;
+                mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
+                    @Override
+                    public AudioVibDriveContinuous.VibInfo onNextVibration() {
+                        return new AudioVibDriveContinuous.VibInfo(currentnp, currentfr, currentamp, audiovolume);
+                    }
+                });
+            }
+        });
+        ampWeakRadio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Highvol.setProgress(eqweak[2]);
+                Midvol.setProgress(eqweak[1]);
+                Lowvol.setProgress(eqweak[0]);
+                currentamp = 0;
+                mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
+                    @Override
+                    public AudioVibDriveContinuous.VibInfo onNextVibration() {
+                        return new AudioVibDriveContinuous.VibInfo(currentnp, currentfr, currentamp, audiovolume);
+                    }
+                });
+            }
+        });
+        Highvol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser)
+                if (fromUser) {
                     if (ampStrRadio.isChecked()) {
-                        ampstrong[currentfr] = progress;
+                        eqstrong[2] = progress;
                     } else {
-                        ampweak[currentfr] = progress;
+                        eqweak[2] = progress;
                     }
+                    mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
+                }
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
+
             }
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
+        Midvol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser){
+                    if (ampStrRadio.isChecked()) {
+                        eqstrong[1] = progress;
+                    } else {
+                        eqweak[1] = progress;
+                    }
+                    mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
 
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        Lowvol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser)   {
+                    if (ampStrRadio.isChecked()) {
+                        eqstrong[0] = progress;
+                    } else {
+                        eqweak[0] = progress;
+                    }
+                    mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        Strongvol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser)   {
+                    ampstrong = progress;
+                    mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        Weakvol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser)   {
+                    ampweak = progress;
+                    mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
         audioSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -223,7 +400,8 @@ public class Calibration extends AppCompatActivity {
             }
         });
 
-        startThread();
+
 
     }
 }
+

@@ -16,24 +16,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Date;
 
 import ca.mcgill.srl.audioVibDrive.AudioVibDriveContinuous;
 
-import static android.widget.Toast.LENGTH_LONG;
+public class Experiment2_1 extends AppCompatActivity {
 
-public class Experiment2 extends AppCompatActivity {
-
-    protected int[] ampweak;
-    protected int[] ampstrong;
+    protected int[] eqweak;
+    protected int[] eqstrong;
+    protected int ampweak, ampstrong;
     protected int audiovolume;
     protected int np,pr,fr,amp, tf = 1800;
     protected short[] audioData;
 
-    protected int numstimuli = 56 + 336;
+    protected int numstimuli = 18 + 126;
     protected int trial = 0;
     protected int[][] stimuli;
     protected int[][] results;
@@ -51,6 +47,11 @@ public class Experiment2 extends AppCompatActivity {
     public static int SAMPLING_RATE = 12000;
 
     protected boolean istouched;
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
 
     private void startThread()  {
         if (mVibThread == null) {
@@ -73,32 +74,34 @@ public class Experiment2 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_experiment2);
+        setContentView(R.layout.activity_cont_experiment);
         Intent intent = getIntent();
 
-        userTxt = findViewById(R.id.exp2_txtIDView);
-        trialTxt = findViewById(R.id.exp2_txtTrialView);
-        final Button nextButton = findViewById(R.id.exp2_NextButton);
-        Button previousButton = findViewById(R.id.exp2_btPrev);
-        Button pauseButton = findViewById(R.id.exp2_btPause);
-        RadioGroup npgroup = findViewById(R.id.exp2_npRadioGroup);
-        RadioGroup prgroup = findViewById(R.id.exp2_prRadioGroup);
-        RadioGroup frgroup = findViewById(R.id.exp2_frRadioGroup);
-        RadioGroup ampgroup = findViewById(R.id.exp2_ampRadioGroup);
+        userTxt = findViewById(R.id.exp1_txtIDView);
+        trialTxt = findViewById(R.id.exp1_txtTrialView);
+        final Button nextButton = findViewById(R.id.exp1_NextButton);
+        Button pauseButton = findViewById(R.id.exp1_btPause);
+        Button previousButton = findViewById(R.id.exp1_btPrev);
+        RadioGroup npgroup = findViewById(R.id.exp1_npRadioGroup);
+        RadioGroup prgroup = findViewById(R.id.exp1_prRadioGroup);
+        RadioGroup frgroup = findViewById(R.id.exp1_frRadioGroup);
+        RadioGroup ampgroup = findViewById(R.id.exp1_ampRadioGroup);
 
         int userID = intent.getExtras().getInt("id");
         userTxt.setText("User ID: " + userID);
-        ampweak = intent.getExtras().getIntArray("ampweak");
-        ampstrong = intent.getExtras().getIntArray("ampstrong");
+        ampweak = intent.getExtras().getInt("ampweak");
+        ampstrong = intent.getExtras().getInt("ampstrong");
+        eqweak = intent.getExtras().getIntArray("eqweak");
+        eqstrong = intent.getExtras().getIntArray("eqstrong");
         audiovolume = intent.getExtras().getInt("audiovolume");
         audioData = intent.getExtras().getShortArray("audiodata");
 
         SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd_HH:mm:ss.SSS");
         Date time = new Date();
         String time1 = sdf.format(time);
-        String logPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/log/" + userID +"_Log_Exp2" + time1 + ".txt";
+        String logPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/log/" + userID +"_Log_Exp2_1_" + time1 + ".txt";
         mLogger = new Logger(logPath, getApplicationContext());
-        String resultPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/result/" + userID +"_Result_Exp2" + time1 + ".txt";
+        String resultPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/singleit/result/" + userID +"_Result_Exp2_1_" + time1 + ".txt";
         mResultLogger = new Logger(resultPath, getApplicationContext());
 
         stimuli = new int[numstimuli][4];
@@ -111,27 +114,23 @@ public class Experiment2 extends AppCompatActivity {
         //1st trial's one.
         switch(stimuli[trial][1])   {
             case 0:
-                tf = 3200;
+                tf = 3000;
                 break;
             case 1:
-                tf = 2400;
+                tf = 2000;
                 break;
             case 2:
-                tf = 1800;
-                break;
-            case 3:
-                tf = 1200;
+                tf = 1000;
                 break;
         }
         mVibDrive = new AudioVibDriveContinuous(tf);
+        mVibDrive.setAudioData(audioData);
+        mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
         mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener()
         {
             @Override
             public AudioVibDriveContinuous.VibInfo onNextVibration() {
-                if(stimuli[trial][3] == 1)
-                    return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampstrong[stimuli[trial][2]], audiovolume);
-                else
-                    return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampweak[stimuli[trial][2]], audiovolume);
+            return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], stimuli[trial][3], audiovolume);
             }
         });
         istouched = false;
@@ -176,15 +175,12 @@ public class Experiment2 extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.exp2_prFast:
-                        pr = 3;
-                        break;
-                    case R.id.exp2_prModerate:
                         pr = 2;
                         break;
-                    case R.id.exp2_prSlow:
+                    case R.id.exp2_prModerate:
                         pr = 1;
                         break;
-                    case R.id.exp2_prVerySlow:
+                    case R.id.exp2_prSlow:
                         pr = 0;
                         break;
                 }
@@ -200,22 +196,13 @@ public class Experiment2 extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
-                    case R.id.exp2_frHighChord:
-                        fr = 5;
-                        break;
-                    case R.id.exp2_frVeryHigh:
-                        fr = 4;
-                        break;
                     case R.id.exp2_frHigh:
-                        fr = 3;
-                        break;
-                    case R.id.exp2_frMid:
                         fr = 2;
                         break;
-                    case R.id.exp2_frLow:
+                    case R.id.exp2_frMid:
                         fr = 1;
                         break;
-                    case R.id.exp2_frLowChord:
+                    case R.id.exp2_frLow:
                         fr = 0;
                         break;
                 }
@@ -288,28 +275,23 @@ public class Experiment2 extends AppCompatActivity {
                 if(trial < numstimuli) {
                     switch(stimuli[trial][1])   {
                         case 0:
-                            tf = 3200;
+                            tf = 3000;
                             break;
                         case 1:
-                            tf = 2400;
+                            tf = 2000;
                             break;
                         case 2:
-                            tf = 1800;
-                            break;
-                        case 3:
-                            tf = 1200;
+                            tf = 1000;
                             break;
                     }
                     mVibDrive = new AudioVibDriveContinuous(tf);
                     mVibDrive.setAudioData(audioData);
+                    mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
                     mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener()
                     {
                         @Override
                         public AudioVibDriveContinuous.VibInfo onNextVibration() {
-                            if(stimuli[trial][3] == 1)
-                                return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampstrong[stimuli[trial][2]], audiovolume);
-                            else
-                                return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampweak[stimuli[trial][2]], audiovolume);
+                        return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], stimuli[trial][3], audiovolume);
                         }
                     });
                     startThread();
@@ -351,29 +333,24 @@ public class Experiment2 extends AppCompatActivity {
                 //update vibration
                 switch (stimuli[trial][1]) {
                     case 0:
-                        tf = 3200;
+                        tf = 3000;
                         break;
                     case 1:
-                        tf = 2400;
+                        tf = 2000;
                         break;
                     case 2:
-                        tf = 1800;
-                        break;
-                    case 3:
-                        tf = 1200;
+                        tf = 1000;
                         break;
                 }
 
                 endThread();
                 mVibDrive = new AudioVibDriveContinuous(tf);
                 mVibDrive.setAudioData(audioData);
+                mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
                 startThread();
                 mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
                     public AudioVibDriveContinuous.VibInfo onNextVibration() {
-                        if (stimuli[trial][3] == 1)
-                            return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampstrong[stimuli[trial][2]], audiovolume);
-                        else
-                            return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampweak[stimuli[trial][2]], audiovolume);
+                        return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], stimuli[trial][3], audiovolume);
                     }
                 });
                 String LoggerString = "Trial: " + trial + " Stimuli: " + stimuli[trial].toString() + "Back";
@@ -399,10 +376,7 @@ public class Experiment2 extends AppCompatActivity {
                     startThread();
                     mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
                         public AudioVibDriveContinuous.VibInfo onNextVibration() {
-                            if(stimuli[trial][3] == 1)
-                                return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampstrong[stimuli[trial][2]], audiovolume);
-                            else
-                                return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], ampweak[stimuli[trial][2]], audiovolume);
+                            return new AudioVibDriveContinuous.VibInfo(stimuli[trial][0], stimuli[trial][2], stimuli[trial][3], audiovolume);
                         }
                     });
                     Toast.makeText(getApplicationContext(), "Restarted vib", Toast.LENGTH_SHORT).show();
@@ -413,7 +387,7 @@ public class Experiment2 extends AppCompatActivity {
     private void stimuliCreate()    {
         //pick random
         int numtraining = 56;
-        int[] numoflevels = {7, 4, 6, 2}; //np, pr, fr, amp
+        int[] numoflevels = {7, 3, 3, 2}; //np, pr, fr, amp
         for (int i = 0; i < numtraining; i++) {
             stimuli[i][0] = (int) (Math.random() * numoflevels[0]) + 1;
             stimuli[i][1] = (int) (Math.random() * numoflevels[1]);
@@ -487,36 +461,24 @@ public class Experiment2 extends AppCompatActivity {
         }
         switch (stimuli[trial][1]) {
             case 0:
-                value = value + "\nPeriod: " + getString(R.string.veryslow);
-                break;
-            case 1:
                 value = value + "\nPeriod: " + getString(R.string.slow);
                 break;
-            case 2:
+            case 1:
                 value = value + "\nPeriod: " + getString(R.string.moderate);
                 break;
-            case 3:
+            case 2:
                 value = value + "\nPeriod: " + getString(R.string.fast);
                 break;
         }
         switch (stimuli[trial][2]) {
             case 0:
-                value = value + "\nFrequency: " + getString(R.string.lowchord);
-                break;
-            case 1:
                 value = value + "\nFrequency: " + getString(R.string.low);
                 break;
-            case 2:
+            case 1:
                 value = value + "\nFrequency: " + getString(R.string.mid);
                 break;
-            case 3:
+            case 2:
                 value = value + "\nFrequency: " + getString(R.string.high);
-                break;
-            case 4:
-                value = value + "\nFrequency: " + getString(R.string.veryhigh);
-                break;
-            case 5:
-                value = value + "\nFrequency: " + getString(R.string.highchord);
                 break;
         }
         switch (stimuli[trial][3]) {

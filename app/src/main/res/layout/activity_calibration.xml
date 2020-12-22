@@ -6,189 +6,275 @@
     android:layout_height="match_parent"
     tools:context=".Calibration">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="360dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <SeekBar
+        android:id="@+id/calib_strongvol"
+        android:layout_width="300dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:max="100"
+        android:progress="70"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.328">
-
-        <TextView
-            android:id="@+id/frtextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/fr"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/amptextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="48dp"
-            android:text="@string/amp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <RadioGroup
-            android:id="@+id/calib_frRadioGroup"
-            android:layout_width="137dp"
-            android:layout_height="201dp"
-            app:layout_constraintStart_toStartOf="@id/frtextView"
-            app:layout_constraintTop_toBottomOf="@id/frtextView">
-
-            <RadioButton
-                android:id="@+id/calib_frHighChord"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/highchord" />
-
-            <RadioButton
-                android:id="@+id/calib_frVeryHigh"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/veryhigh" />
-
-            <RadioButton
-                android:id="@+id/calib_frHigh"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/high" />
-
-            <RadioButton
-                android:id="@+id/calib_frMid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/mid" />
-
-            <RadioButton
-                android:id="@+id/calib_frLow"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/low" />
-
-            <RadioButton
-                android:id="@+id/calib_frLowChord"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/lowchord" />
-
-        </RadioGroup>
-
-        <RadioGroup
-            android:id="@+id/calib_ampRadioGroup"
-            android:layout_width="96dp"
-            android:layout_height="67dp"
-            android:layout_marginTop="60dp"
-            app:layout_constraintStart_toStartOf="@id/amptextView"
-            app:layout_constraintTop_toBottomOf="@id/amptextView">
-
-            <RadioButton
-                android:id="@+id/calib_ampStrong"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/strong" />
-
-            <RadioButton
-                android:id="@+id/calib_ampWeak"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/weak" />
-        </RadioGroup>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintStart_toEndOf="@+id/AmplitudeRadioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/calib_weakvol" />
 
     <EditText
         android:id="@+id/userIdField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="64dp"
-        android:layout_marginBottom="24dp"
         android:ems="10"
         android:hint="-1"
         android:inputType="number"
         android:singleLine="false"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/calib_txtIDView"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.912" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/calib_txtIDView"
         android:layout_width="59dp"
         android:layout_height="26dp"
         android:layout_marginStart="64dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginTop="40dp"
         android:text="User ID"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toStartOf="@+id/userIdField"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <SeekBar
-        android:id="@+id/calibrationSlider"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:max="100"
-        android:progress="50"
-        android:value="50.0"
-        android:valueFrom="0.0"
-        android:valueTo="100.0"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/calib_confirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="48dp"
         android:layout_marginEnd="32dp"
         android:text="@string/confirm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calibrationSlider" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="Audio Volume"
-        app:layout_constraintBottom_toTopOf="@+id/calib_audioSeekbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calib_confirmButton"
-        app:layout_constraintVertical_bias="0.777" />
+        app:layout_constraintTop_toBottomOf="@+id/calib_audioSeekbar" />
 
     <SeekBar
         android:id="@+id/calib_audioSeekbar"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:progress="50"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.51"
+        app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calib_confirmButton" />
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:text="Noise Volume"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pulseSpeedRadioGroup" />
+
+    <SeekBar
+        android:id="@+id/calib_highfreqvol"
+        android:layout_width="180dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="20dp"
+        android:max="100"
+        android:progress="50"
+        android:rotation="270"
+        android:scrollbars="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userIdField" />
+
+    <SeekBar
+        android:id="@+id/calib_midfreqvol"
+        android:layout_width="180dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="100dp"
+        android:max="100"
+        android:progress="30"
+        android:rotation="270"
+        android:scrollbars="vertical"
+        app:layout_constraintEnd_toStartOf="@+id/calib_highfreqvol"
+        app:layout_constraintStart_toEndOf="@+id/calib_lowfreqvol"
+        app:layout_constraintTop_toBottomOf="@+id/userIdField" />
+
+    <SeekBar
+        android:id="@+id/calib_lowfreqvol"
+        android:layout_width="180dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="100dp"
+        android:max="100"
+        android:progress="25"
+        android:rotation="270"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userIdField" />
+
+    <RadioGroup
+        android:id="@+id/AmplitudeRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="28dp"
+        android:isScrollContainer="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calib_lowtoggle">
+
+        <RadioButton
+            android:id="@+id/calib_radioweak"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/weak" />
+
+        <RadioButton
+            android:id="@+id/calib_radiostrong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/strong" />
+
+    </RadioGroup>
+
+    <ToggleButton
+        android:id="@+id/calib_midtoggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="85dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/mid"
+        android:textOff="@string/mid"
+        android:textOn="@string/mid"
+        app:layout_constraintEnd_toStartOf="@+id/calib_hightoggle"
+        app:layout_constraintStart_toEndOf="@+id/calib_lowtoggle"
+        app:layout_constraintTop_toBottomOf="@+id/calib_midfreqvol" />
+
+    <ToggleButton
+        android:id="@+id/calib_hightoggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="85dp"
+        android:layout_marginEnd="60dp"
+        android:text="@string/high"
+        android:textOff="@string/high"
+        android:textOn="@string/high"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calib_highfreqvol" />
+
+    <ToggleButton
+        android:id="@+id/calib_lowtoggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="85dp"
+        android:text="@string/low"
+        android:textOff="@string/low"
+        android:textOn="@string/low"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calib_lowfreqvol" />
+
+    <SeekBar
+        android:id="@+id/calib_weakvol"
+        android:layout_width="300dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:max="100"
+        android:progress="40"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/AmplitudeRadioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="Volume Control"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calib_midtoggle" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="Equalizer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userIdField" />
+
+    <RadioGroup
+        android:id="@+id/pulseSpeedRadioGroup"
+        android:layout_width="299dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="20dp"
+        android:baselineAligned="true"
+        android:gravity="center"
+        android:layoutDirection="inherit"
+        android:layoutMode="clipBounds"
+        android:orientation="horizontal"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        app:layout_optimizationLevel="direct">
+
+        <RadioButton
+            android:id="@+id/calib_radioSlow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:text="Slow" />
+
+        <RadioButton
+            android:id="@+id/calib_radioModerate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:checked="true"
+            android:singleLine="true"
+            android:text="Moderate" />
+
+        <RadioButton
+            android:id="@+id/calib_radioFast"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:text="Fast" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Pulse speed (Period)"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calib_strongvol" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

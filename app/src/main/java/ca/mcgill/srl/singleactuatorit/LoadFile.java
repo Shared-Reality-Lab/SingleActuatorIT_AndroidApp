@@ -99,9 +99,11 @@ public class LoadFile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //load the file
-                int[] weakArray = new int[6];
-                int[] strongArray = new int[6];
+                int[] weakArray = new int[3];
+                int[] strongArray = new int[3];
                 int ruID = 0;
+                int ampweak = 0;
+                int ampstrong = 0;
                 int audiovol = 0;
                 File file = new File(currentPath);
                 FileReader fr = null;
@@ -115,8 +117,14 @@ public class LoadFile extends AppCompatActivity {
                     receiveString = bufrd.readLine();
                     Log.e("File", receiveString);
                     ruID = Integer.parseInt(receiveString);
+                    //ampweak read
                     receiveString = bufrd.readLine();
-                    //stringBuilder.append(receiveString);
+                    ampweak = Integer.parseInt(receiveString);
+                    //
+                    receiveString = bufrd.readLine();
+                    ampstrong = Integer.parseInt(receiveString);
+                    //eq read
+                    receiveString = bufrd.readLine();
                     String[] raw = receiveString.split(",");
                     Log.e ("File", Integer.toString(raw.length));
                     for (int i = 0; i < raw.length; i++) {
@@ -148,8 +156,10 @@ public class LoadFile extends AppCompatActivity {
                 //converting into array
                 resIntent = new Intent();
                 resIntent.putExtra("id", ruID);
-                resIntent.putExtra("ampweak", weakArray);
-                resIntent.putExtra("ampstrong", strongArray);
+                resIntent.putExtra("ampweak", ampweak);
+                resIntent.putExtra("ampstrong", ampstrong);
+                resIntent.putExtra("eqweak", weakArray);
+                resIntent.putExtra("eqstrong", strongArray);
                 resIntent.putExtra("audiovolume", audiovol);
 
                 setResult(RESULT_OK, resIntent);
