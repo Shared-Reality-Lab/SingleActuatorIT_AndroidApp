@@ -39,8 +39,8 @@ public class Experiment1_2 extends AppCompatActivity {
 
     //1 : numerosity, 2: period, 3: freq, 4: amp
     protected int[][] experimentalorder = {{0,1,2,3}, {1,0,3,2}, {2,3,0,1}, {3,2,1,0}};
-    protected int[] numoftraining = {14,6,6,4};
-    protected int[] numoflevels = {7,3,3,2};
+    protected int[] numoftraining = {10,6,6,4};
+    protected int[] numoflevels = {5,3,3,2};
     protected int[] phasesum;
     protected int[] breaktimes = {38,0,0,0};//including num of training
     protected int[] mandatoryBreak = {0, 0, 0, 0};
@@ -121,7 +121,7 @@ public class Experiment1_2 extends AppCompatActivity {
         });
         startThread();
 
-        mVibDrive = new AudioVibDriveStatic(tf);
+        mVibDrive = new AudioVibDriveStatic();
         mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
         mVibDrive.generateVibSignal(stimuli[trial][0], stimuli[trial][1], stimuli[trial][2], stimuli[trial][3]);
 
@@ -138,14 +138,8 @@ public class Experiment1_2 extends AppCompatActivity {
                     case R.id.exp1_np7:
                         np = 7;
                         break;
-                    case R.id.exp1_np6:
-                        np = 6;
-                        break;
                     case R.id.exp1_np5:
                         np = 5;
-                        break;
-                    case R.id.exp1_np4:
-                        np = 4;
                         break;
                     case R.id.exp1_np3:
                         np = 3;

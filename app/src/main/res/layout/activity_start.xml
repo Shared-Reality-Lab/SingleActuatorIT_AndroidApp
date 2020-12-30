@@ -34,10 +34,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:text="@string/famil"
-            app:layout_constraintBottom_toTopOf="@+id/exp1Button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/start_CalibButton" />
@@ -47,55 +46,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:enabled="false"
             android:text="@string/exp1"
-            app:layout_constraintBottom_toTopOf="@+id/exp12Button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/familButton" />
-
-        <Button
-            android:id="@+id/exp12Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:enabled="true"
-            android:text="@string/exp1_2"
-            app:layout_constraintBottom_toTopOf="@+id/exp2Button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/exp1Button"
-            app:layout_constraintVertical_bias="0.125" />
 
         <Button
             android:id="@+id/exp2Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:enabled="false"
-            android:text="@string/exp2"
-            app:layout_constraintBottom_toTopOf="@+id/exp22Button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/exp12Button" />
-
-        <Button
-            android:id="@+id/exp22Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:enabled="true"
-            android:text="@string/exp2_2"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/exp2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/exp2Button" />
+            app:layout_constraintTop_toBottomOf="@+id/exp1Button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

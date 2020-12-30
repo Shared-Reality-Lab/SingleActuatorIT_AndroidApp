@@ -27,8 +27,8 @@ public class StartActivity extends AppCompatActivity {
     protected int request_exp1_1_Code = 1003;
     protected int request_fileload_Code = 1004;
     protected int request_exp2_1_Code = 1005;
-    protected int request_exp1_2_Code = 1005;
-    protected int request_exp2_2_Code = 1005;
+    protected int request_exp1_2_Code = 1006;
+    protected int request_exp2_2_Code = 1007;
 
     int[] eqweak = {25, 30, 35};
     int[] eqstrong = {55, 60, 75};
@@ -38,14 +38,14 @@ public class StartActivity extends AppCompatActivity {
     protected short[] audiodata;
     protected Button exp1Button;
     protected Button exp2Button;
-    protected Button exp1_2Button;
-    protected Button exp2_2Button;
+    //protected Button exp1_2Button;
+    //protected Button exp2_2Button;
     protected Button calibrationButton;
     protected Button familButton;
     protected Button loadButton;
 
     final int SAMPLING_RATE = 12000;
-    final int LONGEST_TIME_FRAME = 3000;
+    final int LONGEST_TIME_FRAME = 4000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,24 +90,6 @@ public class StartActivity extends AppCompatActivity {
         {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Experiment1_1.class);
-                intent.putExtra("id", userID);
-                intent.putExtra("ampweak", ampweak);
-                intent.putExtra("ampstrong", ampstrong);
-                intent.putExtra("eqweak", eqweak);
-                intent.putExtra("eqstrong", eqstrong);
-                intent.putExtra("audiovolume", audiovolume);
-                intent.putExtra("audiodata", audiodata);
-                startActivityForResult(intent, request_exp1_1_Code);
-            }
-        });
-
-        exp2Button = findViewById(R.id.exp2Button);
-        exp2Button.setEnabled(false);
-        exp2Button.setOnClickListener(new Button.OnClickListener()
-        {
-            @Override
-            public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), Experiment2_1.class);
                 intent.putExtra("id", userID);
                 intent.putExtra("ampweak", ampweak);
@@ -120,6 +102,24 @@ public class StartActivity extends AppCompatActivity {
             }
         });
 
+        exp2Button = findViewById(R.id.exp2Button);
+        exp2Button.setEnabled(false);
+        exp2Button.setOnClickListener(new Button.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), Experiment2_2.class);
+                intent.putExtra("id", userID);
+                intent.putExtra("ampweak", ampweak);
+                intent.putExtra("ampstrong", ampstrong);
+                intent.putExtra("eqweak", eqweak);
+                intent.putExtra("eqstrong", eqstrong);
+                intent.putExtra("audiovolume", audiovolume);
+                intent.putExtra("audiodata", audiodata);
+                startActivityForResult(intent, request_exp2_2_Code);
+            }
+        });
+        /*
         exp1_2Button = findViewById(R.id.exp12Button);
         //exp1_2Button.setEnabled(false);
         exp1_2Button.setOnClickListener(new Button.OnClickListener()
@@ -137,6 +137,9 @@ public class StartActivity extends AppCompatActivity {
                 startActivityForResult(intent, request_exp1_2_Code);
             }
         });
+        */
+
+        /*
         exp2_2Button = findViewById(R.id.exp22Button);
         //exp2_2Button.setEnabled(false);
         exp2_2Button.setOnClickListener(new Button.OnClickListener()
@@ -154,7 +157,7 @@ public class StartActivity extends AppCompatActivity {
                 startActivityForResult(intent, request_exp2_2_Code);
             }
         });
-
+        */
         calibrationButton = findViewById(R.id.start_CalibButton);
         calibrationButton.setEnabled(true);
         calibrationButton.setOnClickListener(new Button.OnClickListener()
@@ -229,7 +232,7 @@ public class StartActivity extends AppCompatActivity {
             }
             else if (requestCode == request_exp1_1_Code) {
                 MessageBox("Experiment", "Click Experiment1-2 button to continue. Thank you.");
-                exp1_2Button.setEnabled(true);
+                //exp1_2Button.setEnabled(true);
             }
             else if(requestCode == request_fileload_Code) {
                 userID = intent.getExtras().getInt("id");
@@ -244,8 +247,8 @@ public class StartActivity extends AppCompatActivity {
                 uidView.setText("user ID: " + userID);
                 MessageBox("Experiment", "Click Familiarization to review your vibration sets for the experiment. Thank you.");
             }else if (requestCode == request_exp2_1_Code) {
-                exp2_2Button.setEnabled(true);
-                MessageBox("Experiment", "Click Experiment2-2 button to continue. Thank you.");
+                //exp2_2Button.setEnabled(true);
+                MessageBox("Experiment", "Finished 1st day. Thank you.");
             }
             else if (requestCode == request_exp2_2_Code) {
                 //exp2Button.setEnabled(true);

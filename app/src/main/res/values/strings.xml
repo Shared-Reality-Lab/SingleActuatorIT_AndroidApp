@@ -3,8 +3,9 @@
 
     <string name="fr">Frequency</string>
     <string name="amp">Amplitude</string>
-    <string name="pr">Period</string>
+    <string name="pr">Tempo</string>
     <string name="np">Number of Pulses</string>
+
     <string name="high">High</string>
     <string name="mid">Mid</string>
     <string name="low">Low</string>
@@ -18,9 +19,9 @@
     <string name="strong">Strong</string>
     <string name="weak">Weak</string>
 
-    <string name="exp1">Experiment 1-1</string>
+    <string name="exp1">Experiment 1</string>
     <string name="exp1_2">Experiment 1-2</string>
-    <string name="exp2">Experiment 2-1</string>
+    <string name="exp2">Experiment 2</string>
     <string name="exp2_2">Experiment 2-2</string>
     <string name="famil">Familiarization</string>
 

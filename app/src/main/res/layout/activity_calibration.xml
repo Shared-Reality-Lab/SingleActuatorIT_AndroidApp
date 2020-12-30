@@ -63,7 +63,7 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
         android:progress="50"
         app:layout_constraintEnd_toEndOf="parent"
@@ -82,7 +82,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pulseSpeedRadioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBarNumPulse" />
 
     <SeekBar
         android:id="@+id/calib_highfreqvol"
@@ -272,9 +272,35 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="Pulse speed (Period)"
+        android:text="Pulse Tempo and Number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calib_strongvol" />
+
+    <SeekBar
+        android:id="@+id/seekBarNumPulse"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="20dp"
+        android:max="7"
+        android:progress="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pulseSpeedRadioGroup" />
+
+    <TextView
+        android:id="@+id/txtNumPulse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="64dp"
+        android:text="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/seekBarNumPulse"
+        app:layout_constraintTop_toBottomOf="@+id/pulseSpeedRadioGroup" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

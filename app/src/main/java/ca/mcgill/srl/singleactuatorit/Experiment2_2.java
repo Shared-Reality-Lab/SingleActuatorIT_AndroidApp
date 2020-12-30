@@ -27,10 +27,10 @@ public class Experiment2_2 extends AppCompatActivity {
     protected int[] eqstrong;
     protected int ampweak, ampstrong;
     protected int audiovolume;
-    protected int np,pr,fr,amp,tf;
+    protected int np=3,pr=1,fr=1,amp=1,tf;
     protected short[] audioData;
 
-    protected int numstimuli = 18 + 126;
+    protected int numstimuli = 30 + 180;
     protected int trial = 0;
     protected int[][] stimuli;
     protected int[][] results;
@@ -113,7 +113,7 @@ public class Experiment2_2 extends AppCompatActivity {
         //init the variables for default
         //vibration thread init and start
         //1st trial's one.
-        tf = 3000;
+        tf = 4000;
         mNoiseDrive = new AudioVibDriveContinuous(tf);
         mNoiseDrive.setAudioData(audioData);
         mNoiseDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener()
@@ -125,7 +125,8 @@ public class Experiment2_2 extends AppCompatActivity {
         });
         startThread();
 
-        mVibDrive = new AudioVibDriveStatic(tf);
+        mVibDrive = new AudioVibDriveStatic();
+        mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
         mVibDrive.generateVibSignal(stimuli[trial][0], stimuli[trial][1], stimuli[trial][2], stimuli[trial][3]);
 
 
@@ -139,14 +140,8 @@ public class Experiment2_2 extends AppCompatActivity {
                     case R.id.exp2_np7:
                         np = 7;
                         break;
-                    case R.id.exp2_np6:
-                        np = 6;
-                        break;
                     case R.id.exp2_np5:
                         np = 5;
-                        break;
-                    case R.id.exp2_np4:
-                        np = 4;
                         break;
                     case R.id.exp2_np3:
                         np = 3;
@@ -251,7 +246,7 @@ public class Experiment2_2 extends AppCompatActivity {
                 mLogger.WriteMessage(LoggerString, true);
                 mLogger.WriteArray(resultarr, false, true);
 
-                if (trial < 18) {
+                if (trial < 30) {
                     String str;
                     if((resultarr[1] == resultarr[5]) && (resultarr[2] == resultarr[6]) && (resultarr[3] == resultarr[7]) && (resultarr[4] == resultarr[8])) {
                         str = "Correct";
@@ -262,9 +257,7 @@ public class Experiment2_2 extends AppCompatActivity {
                     MessageBox("Feedback", str);
                 }
                 //session finish: 2 min break;
-                else if (trial % 28 == 0) {
-                    MessageBox("Session break", "Please make a 2-min rest.");
-                }
+
 
                 trial = trial + 1;
                 trialTxt.setText("Trial: " + trial);
@@ -289,6 +282,9 @@ public class Experiment2_2 extends AppCompatActivity {
                     finish();
                     return;
                 }
+                if (trial % 30 == 0) {
+                    MessageBox("Session break", "Please make a 2-min rest.");
+                }
 
 
             }
@@ -309,6 +305,7 @@ public class Experiment2_2 extends AppCompatActivity {
                     //restart timer
                     mNoiseDrive = new AudioVibDriveContinuous(tf);
                     mNoiseDrive.setAudioData(audioData);
+                    mNoiseDrive.vibVolumeChange(ampweak,ampstrong,eqweak,eqstrong);
                     startThread();
                     mNoiseDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
                         public AudioVibDriveContinuous.VibInfo onNextVibration() {
@@ -332,10 +329,11 @@ public class Experiment2_2 extends AppCompatActivity {
     }
     private void stimuliCreate()    {
         //pick random
-        int numtraining = 18;
-        int[] numoflevels = {7, 3, 3, 2}; //np, pr, fr, amp
+        int numtraining = 30;
+        int[] numoflevels = {5, 3, 3, 2}; //np, pr, fr, amp
+        int[] pulses = {1,2,3,5,7};
         for (int i = 0; i < numtraining; i++) {
-            stimuli[i][0] = (int) (Math.random() * numoflevels[0]) + 1;
+            stimuli[i][0] = pulses[(int)(Math.random() * numoflevels[0])];
             stimuli[i][1] = (int) (Math.random() * numoflevels[1]);
             stimuli[i][2] = (int) (Math.random() * numoflevels[2]);
             stimuli[i][3] = (int) (Math.random() * numoflevels[3]);
@@ -354,15 +352,17 @@ public class Experiment2_2 extends AppCompatActivity {
         }
         //main stimuli
         int count = numtraining;
-        for (int i =0; i<numoflevels[0]; i++) {
-            for (int j = 0; j < (numoflevels[1]); j++) {
-                for (int k = 0; k < (numoflevels[2]); k++) {
-                    for (int l = 0; l < numoflevels[3]; l++) {
-                        stimuli[count][0] = i+1;
-                        stimuli[count][1] = j;
-                        stimuli[count][2] = k;
-                        stimuli[count][3] = l;
-                        count = count + 1;
+        for (int r = 0; r < 2; r++) {
+            for (int i =0; i<numoflevels[0]; i++) {
+                for (int j = 0; j < (numoflevels[1]); j++) {
+                    for (int k = 0; k < (numoflevels[2]); k++) {
+                        for (int l = 0; l < numoflevels[3]; l++) {
+                            stimuli[count][0] = pulses[(int) (Math.random() * numoflevels[0])];
+                            stimuli[count][1] = j;
+                            stimuli[count][2] = k;
+                            stimuli[count][3] = l;
+                            count = count + 1;
+                        }
                     }
                 }
             }
@@ -392,14 +392,8 @@ public class Experiment2_2 extends AppCompatActivity {
             case 3:
                 value = "Number: 3 ";
                 break;
-            case 4:
-                value = "Number: 4 ";
-                break;
             case 5:
                 value = "Number: 5 ";
-                break;
-            case 6:
-                value = "Number: 6 ";
                 break;
             case 7:
                 value = "Number: 7 ";

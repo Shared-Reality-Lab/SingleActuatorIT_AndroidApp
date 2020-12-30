@@ -1,6 +1,7 @@
 package ca.mcgill.srl.singleactuatorit;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
@@ -14,9 +15,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +37,7 @@ public class Familization extends AppCompatActivity {
     protected int[] eqweak;
     protected int[] eqstrong;
     protected int audiovolume;
-    protected int np = 4, pr = 1, fr = 1, amp = 1;
+    protected int np = 3, pr = 1, fr = 1, amp = 1;
     protected int tf = 2000;
     protected short[] audiodata;
     private Thread mVibThread = null;
@@ -88,7 +92,11 @@ public class Familization extends AppCompatActivity {
         final RadioGroup ampgroup = findViewById(R.id.famil_ampRadioGroup);
 
 
+        final ToggleButton random_hide = findViewById(R.id.famil_random_hide);
         Button doneButton = findViewById(R.id.doneButton);
+
+        final ConstraintLayout mLayout = findViewById(R.id.constraintLayout);
+
         ampweak = intent.getExtras().getInt("ampweak");
         ampstrong = intent.getExtras().getInt("ampstrong");
         eqweak = intent.getExtras().getIntArray("eqweak");
@@ -109,6 +117,93 @@ public class Familization extends AppCompatActivity {
             }
         });
 
+        random_hide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (random_hide.isChecked())    {
+                    int t = (int)(Math.random() * 100) % 5;
+                    switch (t) {
+                        case 4:
+                            np = 7;
+                            npgroup.check(R.id.famil_np7);
+                            break;
+                        case 3:
+                            np = 5;
+                            npgroup.check(R.id.famil_np5);
+                            break;
+                        case 2:
+                            np = 3;
+                            npgroup.check(R.id.famil_np3);
+                            break;
+                        case 1:
+                            np = 2;
+                            npgroup.check(R.id.famil_np2);
+                            break;
+                        case 0:
+                            np = 1;
+                            npgroup.check(R.id.famil_np1);
+                            break;
+                    }
+                    pr = (int)(Math.random() * 99) % 3;
+                    switch (pr) {
+                        case 2:
+                            prgroup.check(R.id.famil_prFast);
+                            break;
+                        case 1:
+                            prgroup.check(R.id.famil_prModerate);
+                            break;
+                        case 0:
+                            prgroup.check(R.id.famil_prSlow);
+                            break;
+                    }
+                    fr = (int)(Math.random() * 99) % 3;
+                    switch (fr) {
+                        case 2:
+                            frgroup.check(R.id.famil_frHigh);
+                            break;
+                        case 1:
+                            frgroup.check(R.id.famil_frMid);
+                            break;
+                        case 0:
+                            frgroup.check(R.id.famil_frLow);
+                            break;
+                    }
+                    amp = (int)(Math.random() * 10) % 2;
+                    switch (amp) {
+                        case 1:
+                            ampgroup.check(R.id.famil_ampStrong);
+                            break;
+                        case 0:
+                            ampgroup.check(R.id.famil_ampWeak);
+                            break;
+                    }
+                    npgroup.setVisibility(View.INVISIBLE);
+                    prgroup.setVisibility(View.INVISIBLE);
+                    frgroup.setVisibility(View.INVISIBLE);
+                    ampgroup.setVisibility(View.INVISIBLE);
+                    Log.e("random", np + " " + pr + " " + fr + " " + amp);
+                    endThread();
+                    mVibDrive = new AudioVibDriveContinuous(tf);
+                    mVibDrive.setAudioData(audiodata);
+                    mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);
+                    mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
+                        @Override
+                        public AudioVibDriveContinuous.VibInfo onNextVibration() {
+                            return new AudioVibDriveContinuous.VibInfo(np, fr, amp, audiovolume);
+                        }
+                    });
+                    startThread();
+
+                }
+                else    {
+                    npgroup.setVisibility(View.VISIBLE);
+                    prgroup.setVisibility(View.VISIBLE);
+                    frgroup.setVisibility(View.VISIBLE);
+                    ampgroup.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
         npgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -116,14 +211,8 @@ public class Familization extends AppCompatActivity {
                     case R.id.famil_np7:
                         np = 7;
                         break;
-                    case R.id.famil_np6:
-                        np = 6;
-                        break;
                     case R.id.famil_np5:
                         np = 5;
-                        break;
-                    case R.id.famil_np4:
-                        np = 4;
                         break;
                     case R.id.famil_np3:
                         np = 3;
@@ -149,16 +238,16 @@ public class Familization extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch(checkedId) {
                     case R.id.famil_prFast:
-                        pr = 3;
+                        pr = 2;
                         tf = 1000;
                         break;
                     case R.id.famil_prModerate:
-                        pr = 2;
+                        pr = 1;
                         tf = 2000;
                         break;
                     case R.id.famil_prSlow:
-                        pr = 1;
-                        tf = 3000;
+                        pr = 0;
+                        tf = 4000;
                         break;
                 }
                 endThread();
@@ -218,7 +307,7 @@ public class Familization extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), Integer.toString(np)+ pr + fr + amp, Toast.LENGTH_SHORT).show();
             }
         });
-        doneButton.setOnClickListener(new Button.OnClickListener() {
+        doneButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent resIntent = new Intent();

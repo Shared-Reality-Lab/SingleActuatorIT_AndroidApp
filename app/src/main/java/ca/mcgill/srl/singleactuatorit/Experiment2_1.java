@@ -26,10 +26,10 @@ public class Experiment2_1 extends AppCompatActivity {
     protected int[] eqstrong;
     protected int ampweak, ampstrong;
     protected int audiovolume;
-    protected int np,pr,fr,amp, tf = 1800;
+    protected int np=3,pr=1,fr=1,amp=1, tf=4000;
     protected short[] audioData;
 
-    protected int numstimuli = 18 + 126;
+    protected int numstimuli = 30 + 180;
     protected int trial = 0;
     protected int[][] stimuli;
     protected int[][] results;
@@ -114,7 +114,7 @@ public class Experiment2_1 extends AppCompatActivity {
         //1st trial's one.
         switch(stimuli[trial][1])   {
             case 0:
-                tf = 3000;
+                tf = 4000;
                 break;
             case 1:
                 tf = 2000;
@@ -140,25 +140,19 @@ public class Experiment2_1 extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
-                    case R.id.exp2_np7:
+                    case R.id.exp1_np7:
                         np = 7;
                         break;
-                    case R.id.exp2_np6:
-                        np = 6;
-                        break;
-                    case R.id.exp2_np5:
+                    case R.id.exp1_np5:
                         np = 5;
                         break;
-                    case R.id.exp2_np4:
-                        np = 4;
-                        break;
-                    case R.id.exp2_np3:
+                    case R.id.exp1_np3:
                         np = 3;
                         break;
-                    case R.id.exp2_np2:
+                    case R.id.exp1_np2:
                         np = 2;
                         break;
-                    case R.id.exp2_np1:
+                    case R.id.exp1_np1:
                         np = 1;
                         break;
                 }
@@ -174,13 +168,13 @@ public class Experiment2_1 extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
-                    case R.id.exp2_prFast:
+                    case R.id.exp1_prFast:
                         pr = 2;
                         break;
-                    case R.id.exp2_prModerate:
+                    case R.id.exp1_prModerate:
                         pr = 1;
                         break;
-                    case R.id.exp2_prSlow:
+                    case R.id.exp1_prSlow:
                         pr = 0;
                         break;
                 }
@@ -188,7 +182,7 @@ public class Experiment2_1 extends AppCompatActivity {
                     istouched = true;
                     nextButton.setEnabled(true);
                 }
-                mLogger.WriteMessage("Period\t"+ pr, true);
+                mLogger.WriteMessage("Tempo\t"+ pr, true);
                 //Toast.makeText(getApplicationContext(), Integer.toString(np) + Integer.toString(pr) + Integer.toString(fr) + Integer.toString(amp), Toast.LENGTH_SHORT).show();
             }
         });
@@ -196,13 +190,13 @@ public class Experiment2_1 extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
-                    case R.id.exp2_frHigh:
+                    case R.id.exp1_frHigh:
                         fr = 2;
                         break;
-                    case R.id.exp2_frMid:
+                    case R.id.exp1_frMid:
                         fr = 1;
                         break;
-                    case R.id.exp2_frLow:
+                    case R.id.exp1_frLow:
                         fr = 0;
                         break;
                 }
@@ -218,10 +212,10 @@ public class Experiment2_1 extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
-                    case R.id.exp2_ampStrong:
+                    case R.id.exp1_ampStrong:
                         amp = 1;
                         break;
-                    case R.id.exp2_ampWeak:
+                    case R.id.exp1_ampWeak:
                         amp = 0;
                         break;
                 }
@@ -245,7 +239,7 @@ public class Experiment2_1 extends AppCompatActivity {
                 results[trial][1] = pr;
                 results[trial][2] = fr;
                 results[trial][3] = amp;
-
+                Log.e("result", np + "" +pr+fr+amp);
                 int[] resultarr = new int[9];
                 resultarr[0] = trial;
                 resultarr[1] = stimuli[trial][0]; resultarr[2] = stimuli[trial][1]; resultarr[3] = stimuli[trial][2]; resultarr[4] = stimuli[trial][3];
@@ -255,7 +249,7 @@ public class Experiment2_1 extends AppCompatActivity {
                 mLogger.WriteArray(resultarr, false, true);
                 endThread();
 
-                if (trial < 56) {
+                if (trial < 30) {
                     String str;
                     if((resultarr[1] == resultarr[5]) && (resultarr[2] == resultarr[6]) && (resultarr[3] == resultarr[7]) && (resultarr[4] == resultarr[8])) {
                         str = "Correct";
@@ -266,16 +260,14 @@ public class Experiment2_1 extends AppCompatActivity {
                     MessageBox("Feedback", str);
                 }
                 //session finish: 2 min break;
-                else if (trial % 28 == 0) {
-                    MessageBox("Session break", "Please make a 2-min rest.");
-                }
 
                 trial = trial + 1;
+
                 trialTxt.setText("Trial: " + trial);
                 if(trial < numstimuli) {
                     switch(stimuli[trial][1])   {
                         case 0:
-                            tf = 3000;
+                            tf = 4000;
                             break;
                         case 1:
                             tf = 2000;
@@ -313,7 +305,9 @@ public class Experiment2_1 extends AppCompatActivity {
                     finish();
                     return;
                 }
-
+                if (trial % 30 == 0) {
+                    MessageBox("Session break", "Please make a 2-min rest.");
+                }
 
 
 
@@ -333,7 +327,7 @@ public class Experiment2_1 extends AppCompatActivity {
                 //update vibration
                 switch (stimuli[trial][1]) {
                     case 0:
-                        tf = 3000;
+                        tf = 4000;
                         break;
                     case 1:
                         tf = 2000;
@@ -373,6 +367,7 @@ public class Experiment2_1 extends AppCompatActivity {
                     //restart timer
                     mVibDrive = new AudioVibDriveContinuous(tf);
                     mVibDrive.setAudioData(audioData);
+                    mVibDrive.vibVolumeChange(ampweak,ampstrong,eqweak,eqstrong);
                     startThread();
                     mVibDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
                         public AudioVibDriveContinuous.VibInfo onNextVibration() {
@@ -386,10 +381,11 @@ public class Experiment2_1 extends AppCompatActivity {
     }
     private void stimuliCreate()    {
         //pick random
-        int numtraining = 56;
-        int[] numoflevels = {7, 3, 3, 2}; //np, pr, fr, amp
+        int numtraining = 30;
+        int[] numoflevels = {5, 3, 3, 2}; //np, pr, fr, amp
+        int[] pulses = {1,2,3,5,7};
         for (int i = 0; i < numtraining; i++) {
-            stimuli[i][0] = (int) (Math.random() * numoflevels[0]) + 1;
+            stimuli[i][0] =  pulses[(int) (Math.random() * numoflevels[0])];
             stimuli[i][1] = (int) (Math.random() * numoflevels[1]);
             stimuli[i][2] = (int) (Math.random() * numoflevels[2]);
             stimuli[i][3] = (int) (Math.random() * numoflevels[3]);
@@ -408,15 +404,17 @@ public class Experiment2_1 extends AppCompatActivity {
         }
         //main stimuli
         int count = numtraining;
-        for (int i =0; i<numoflevels[0]; i++) {
-            for (int j = 0; j < (numoflevels[1]); j++) {
-                for (int k = 0; k < (numoflevels[2]); k++) {
-                    for (int l = 0; l < numoflevels[3]; l++) {
-                        stimuli[count][0] = i+1;
-                        stimuli[count][1] = j;
-                        stimuli[count][2] = k;
-                        stimuli[count][3] = l;
-                        count = count + 1;
+        for (int r =0; r < 2; r++)  {
+            for (int i =0; i<numoflevels[0]; i++) {
+                for (int j = 0; j < (numoflevels[1]); j++) {
+                    for (int k = 0; k < (numoflevels[2]); k++) {
+                        for (int l = 0; l < numoflevels[3]; l++) {
+                            stimuli[count][0] = pulses[(int) (Math.random() * numoflevels[0])];
+                            stimuli[count][1] = j;
+                            stimuli[count][2] = k;
+                            stimuli[count][3] = l;
+                            count = count + 1;
+                        }
                     }
                 }
             }
@@ -446,14 +444,8 @@ public class Experiment2_1 extends AppCompatActivity {
             case 3:
                 value = "Number: 3 ";
                 break;
-            case 4:
-                value = "Number: 4 ";
-                break;
             case 5:
                 value = "Number: 5 ";
-                break;
-            case 6:
-                value = "Number: 6 ";
                 break;
             case 7:
                 value = "Number: 7 ";
@@ -461,13 +453,13 @@ public class Experiment2_1 extends AppCompatActivity {
         }
         switch (stimuli[trial][1]) {
             case 0:
-                value = value + "\nPeriod: " + getString(R.string.slow);
+                value = value + "\nTempo: " + getString(R.string.slow);
                 break;
             case 1:
-                value = value + "\nPeriod: " + getString(R.string.moderate);
+                value = value + "\nTempo: " + getString(R.string.moderate);
                 break;
             case 2:
-                value = value + "\nPeriod: " + getString(R.string.fast);
+                value = value + "\nTempo: " + getString(R.string.fast);
                 break;
         }
         switch (stimuli[trial][2]) {

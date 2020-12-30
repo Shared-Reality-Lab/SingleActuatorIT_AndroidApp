@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import ca.mcgill.srl.audioVibDrive.AudioVibDriveContinuous;
@@ -25,7 +26,7 @@ public class Calibration extends AppCompatActivity {
     int audiovolume = 50;
     short[] audiodata;
     protected int currentfr = 1;
-    protected int currentnp = 4;
+    protected int currentnp = 3;
     protected int currentamp = 0;
     int tf = 2000;
     protected EditText userTxt;
@@ -86,6 +87,9 @@ public class Calibration extends AppCompatActivity {
         final SeekBar Weakvol = findViewById(R.id.calib_weakvol);
         final SeekBar Strongvol = findViewById(R.id.calib_strongvol);
 
+        final SeekBar numpulseBar = findViewById(R.id.seekBarNumPulse);
+        final TextView pulsetxt = findViewById(R.id.txtNumPulse);
+
         final SeekBar audioSlider = findViewById(R.id.calib_audioSeekbar);
         audioSlider.setProgress(audiovolume);
         userTxt = findViewById(R.id.userIdField);
@@ -114,6 +118,26 @@ public class Calibration extends AppCompatActivity {
             }
         });
         startThread();
+        numpulseBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                currentnp = progress;
+                pulsetxt.setText(Integer.toString(currentnp));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         pulsespeed.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -147,7 +171,7 @@ public class Calibration extends AppCompatActivity {
                         startThread();
                         break;
                     case R.id.calib_radioSlow:
-                        tf = 3000;
+                        tf = 4000;
                         endThread();
                         mVibDrive = new AudioVibDriveContinuous(tf);
                         mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);

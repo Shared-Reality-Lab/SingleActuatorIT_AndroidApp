@@ -41,8 +41,8 @@ public class AudioVibDriveContinuous extends AudioVibDrive implements Runnable {
 
 	//Custom function for generate Vibrations for Experiments.
 	private void generateVibSignal(int freq, int amp) {
-		double[] fb = {50, 100, 250};
-		double[] fc = {70, 100, 250};
+		double[] fb = {50, 120, 300};
+		double[] fc = {70, 120, 300};
 
 		//equalizing perceived intensity
 		double[] weight_amp = {0.11, 0.12, 0.35};
@@ -64,18 +64,18 @@ public class AudioVibDriveContinuous extends AudioVibDrive implements Runnable {
 		int notesize = (int) (mFrameSize / noteperbar * 0.6);
 		//Log.e ("framesize", Integer.toString(mFrameSize));
 		//Log.e ("notesize", Integer.toString(notesize));
-		double[] fb = {50, 100, 300, 0};
-		double[] fc = {70, 100, 300, 0};
+		double[] fb = {60, 120, 300, 0};
+		double[] fc = {80, 120, 300, 0};
 
 		//equalizing perceived intensity
-		double[] weight_amp = {0.38, 0.32, 0.75, 0};
+		double[] weight_amp = {0.3, 0.25, 0.6, 0};
 		double tamp;
 		if(freq == 3) tamp = 0;
 		else if (amp == 1)	{
-			tamp = (double)(ampstrong/100.0) * (double)(eqstrong[freq]/100.0) * weight_amp[freq];
+			tamp = (double)(ampstrong/100.0) * (double)(eqstrong[freq]/50.0) * weight_amp[freq];
 		}
 		else	{
-			tamp = (double)(ampweak/100.0) * (double)(eqweak[freq]/100.0)* weight_amp[freq];
+			tamp = (double)(ampweak/100.0) * (double)(eqweak[freq]/50.0)* weight_amp[freq];
 		}
 		double cAmp = tamp * weight_amp[freq];
 
