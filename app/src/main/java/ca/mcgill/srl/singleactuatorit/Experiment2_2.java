@@ -328,7 +328,7 @@ public class Experiment2_2 extends AppCompatActivity {
 
     }
     private void stimuliCreate()    {
-        //pick random
+        //pick random set for general training
         int numtraining = 30;
         int[] numoflevels = {5, 3, 3, 2}; //np, pr, fr, amp
         int[] pulses = {1,2,3,5,7};
@@ -350,6 +350,8 @@ public class Experiment2_2 extends AppCompatActivity {
             stimuli[j] = temp;
             //rcount = rcount + 1;
         }
+        //add 'confusing' cases based on pilot experiment
+        
         //main stimuli
         int count = numtraining;
         for (int r = 0; r < 2; r++) {
@@ -357,7 +359,7 @@ public class Experiment2_2 extends AppCompatActivity {
                 for (int j = 0; j < (numoflevels[1]); j++) {
                     for (int k = 0; k < (numoflevels[2]); k++) {
                         for (int l = 0; l < numoflevels[3]; l++) {
-                            stimuli[count][0] = pulses[(int) (Math.random() * numoflevels[0])];
+                            stimuli[count][0] = pulses[i];
                             stimuli[count][1] = j;
                             stimuli[count][2] = k;
                             stimuli[count][3] = l;

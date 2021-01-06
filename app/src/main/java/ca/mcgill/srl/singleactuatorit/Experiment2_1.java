@@ -409,7 +409,7 @@ public class Experiment2_1 extends AppCompatActivity {
                 for (int j = 0; j < (numoflevels[1]); j++) {
                     for (int k = 0; k < (numoflevels[2]); k++) {
                         for (int l = 0; l < numoflevels[3]; l++) {
-                            stimuli[count][0] = pulses[(int) (Math.random() * numoflevels[0])];
+                            stimuli[count][0] = pulses[i];
                             stimuli[count][1] = j;
                             stimuli[count][2] = k;
                             stimuli[count][3] = l;

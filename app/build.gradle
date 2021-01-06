@@ -26,8 +26,6 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation fileTree(dir: 'C:\\Users\\dream\\AndroidStudioProjects\\AudioVibDrive_2', include: ['*.aar', '*.jar'], exclude: [])
-    implementation fileTree(dir: 'C:\\Users\\dream\\AndroidStudioProjects\\Util', include: ['*.aar', '*.jar'], exclude: [])
     implementation project(path: ':audioVibDrive')
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
