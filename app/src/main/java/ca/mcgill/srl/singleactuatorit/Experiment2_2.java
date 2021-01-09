@@ -16,10 +16,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Date;
 
 import ca.mcgill.srl.audioVibDrive.AudioVibDriveContinuous;
 import ca.mcgill.srl.audioVibDrive.AudioVibDriveStatic;
+
+import static java.lang.Math.abs;
 
 public class Experiment2_2 extends AppCompatActivity {
 
@@ -28,9 +33,9 @@ public class Experiment2_2 extends AppCompatActivity {
     protected int ampweak, ampstrong;
     protected int audiovolume;
     protected int np=3,pr=1,fr=1,amp=1,tf;
-    protected short[] audioData;
+    protected short[] audiodata;
 
-    protected int numstimuli = 30 + 180;
+    protected int numstimuli = 40 + 180;
     protected int trial = 0;
     protected int[][] stimuli;
     protected int[][] results;
@@ -46,6 +51,7 @@ public class Experiment2_2 extends AppCompatActivity {
     protected AudioVibDriveContinuous mNoiseDrive;
     protected AudioVibDriveStatic mVibDrive;
     public static int SAMPLING_RATE = 12000;
+    final int LONGEST_TIME_FRAME = 4000;
     protected boolean istouched;
 
     @Override
@@ -95,7 +101,6 @@ public class Experiment2_2 extends AppCompatActivity {
         eqweak = intent.getExtras().getIntArray("eqweak");
         eqstrong = intent.getExtras().getIntArray("eqstrong");
         audiovolume = intent.getExtras().getInt("audiovolume");
-        audioData = intent.getExtras().getShortArray("audiodata");
 
         SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd_HH:mm:ss.SSS");
         Date time = new Date();
@@ -114,8 +119,34 @@ public class Experiment2_2 extends AppCompatActivity {
         //vibration thread init and start
         //1st trial's one.
         tf = 4000;
+
+        audiodata = new short[(SAMPLING_RATE * LONGEST_TIME_FRAME / 1000)];
+        String audioFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath() + "/pinknoise_12k.wav";
+        File file = new File(audioFileName);
+        //Log.e("audioFill", "=" + file.length());
+        byte[] wavHeader = new byte[44];
+        byte[] musicBytes = new byte[2];
+
+        try {
+            FileInputStream in = new FileInputStream(audioFileName);
+            in.read(wavHeader);
+            for(int i = 0; i < SAMPLING_RATE * LONGEST_TIME_FRAME / 1000 - 1; i++) {
+                in.read(musicBytes);
+                audiodata[i] = (short) ((musicBytes[0] & 0xFF) << 8 | (musicBytes[1] & 0xFF));
+            }
+
+            //Log.e("ra", "read");
+            in.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            //Log.e ("file", e.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+            //Log.e ("file", e.toString());
+        }
+
         mNoiseDrive = new AudioVibDriveContinuous(tf);
-        mNoiseDrive.setAudioData(audioData);
+        mNoiseDrive.setAudioData(audiodata);
         mNoiseDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener()
         {
             @Override
@@ -246,7 +277,7 @@ public class Experiment2_2 extends AppCompatActivity {
                 mLogger.WriteMessage(LoggerString, true);
                 mLogger.WriteArray(resultarr, false, true);
 
-                if (trial < 30) {
+                if (trial < 40) {
                     String str;
                     if((resultarr[1] == resultarr[5]) && (resultarr[2] == resultarr[6]) && (resultarr[3] == resultarr[7]) && (resultarr[4] == resultarr[8])) {
                         str = "Correct";
@@ -282,7 +313,7 @@ public class Experiment2_2 extends AppCompatActivity {
                     finish();
                     return;
                 }
-                if (trial % 30 == 0) {
+                if (trial % 30 == 10 && trial > 30) {
                     MessageBox("Session break", "Please make a 2-min rest.");
                 }
 
@@ -304,7 +335,7 @@ public class Experiment2_2 extends AppCompatActivity {
                     //resume vib thread
                     //restart timer
                     mNoiseDrive = new AudioVibDriveContinuous(tf);
-                    mNoiseDrive.setAudioData(audioData);
+                    mNoiseDrive.setAudioData(audiodata);
                     mNoiseDrive.vibVolumeChange(ampweak,ampstrong,eqweak,eqstrong);
                     startThread();
                     mNoiseDrive.setOnNextDriveListener(new AudioVibDriveContinuous.OnNextDriveListener() {
@@ -329,18 +360,19 @@ public class Experiment2_2 extends AppCompatActivity {
     }
     private void stimuliCreate()    {
         //pick random set for general training
-        int numtraining = 30;
+        int numrandomtraining = 20;
+        int numtotaltraining = 40;
         int[] numoflevels = {5, 3, 3, 2}; //np, pr, fr, amp
         int[] pulses = {1,2,3,5,7};
-        for (int i = 0; i < numtraining; i++) {
+        for (int i = 0; i < numrandomtraining; i++) {
             stimuli[i][0] = pulses[(int)(Math.random() * numoflevels[0])];
             stimuli[i][1] = (int) (Math.random() * numoflevels[1]);
             stimuli[i][2] = (int) (Math.random() * numoflevels[2]);
             stimuli[i][3] = (int) (Math.random() * numoflevels[3]);
         }
          //randomization
-        for(int j = 0; j < numtraining; j++)    {
-            int r = (int) (Math.random() * numtraining);
+        for(int j = 0; j < numrandomtraining; j++)    {
+            int r = (int) (Math.random() * numrandomtraining);
             if (r == j) {
                 continue;
             }
@@ -350,10 +382,48 @@ public class Experiment2_2 extends AppCompatActivity {
             stimuli[j] = temp;
             //rcount = rcount + 1;
         }
-        //add 'confusing' cases based on pilot experiment
-        
+        //adding 20 more 'confusing' cases based on pilot experiment
+        //mid-fast tempo, (strong-high freq) vs. (weak-mid freq)
+        int count = numrandomtraining;
+        for (int i = 0; i < 10; i++) {
+            int r = (int)(Math.random() * 2);
+            stimuli[count][0] = pulses[(int)(Math.random() * 5)];
+            stimuli[count][1] = 1 + (int)(Math.random() * 2);
+            if (r == 1)  {
+                stimuli[count][2] = 2;
+                stimuli[count][3] = 1;
+            }
+            else    {
+                stimuli[count][2] = 1;
+                stimuli[count][3] = 0;
+            }
+            count = count + 1;
+        }
+        //fast tempo, mid or high freq, number of pulses
+        for (int i = 0; i < 10; i++) {
+            int r = (int)(Math.random() * 2);
+            stimuli[count][0] = pulses[(int)(Math.random() * 5)];
+            stimuli[count][1] = 2;
+            stimuli[count][2] = (int)(Math.random() * 3);
+            stimuli[count][3] = (int)(Math.random() * 2);
+            count = count + 1;
+        }
+        //randomization
+        for(int j = numrandomtraining; j < count; j++)    {
+            int r = (int) (Math.random() * numrandomtraining) + numrandomtraining;
+            if (r == j) {
+                continue;
+            }
+            int[] temp = new int[4];
+            temp = stimuli[r];
+            stimuli[r] = stimuli[j];
+            stimuli[j] = temp;
+        }
+
+        //log
+
         //main stimuli
-        int count = numtraining;
+
         for (int r = 0; r < 2; r++) {
             for (int i =0; i<numoflevels[0]; i++) {
                 for (int j = 0; j < (numoflevels[1]); j++) {
@@ -369,8 +439,8 @@ public class Experiment2_2 extends AppCompatActivity {
                 }
             }
         }
-        for(int j = numtraining; j < count; j++)    {
-            int r = (int) (Math.random() * (count-numtraining) + numtraining);
+        for(int j = numtotaltraining; j < count; j++)    {
+            int r = (int) (Math.random() * (count-numtotaltraining) + numtotaltraining);
             if (r == j) {
                 continue;
             }
@@ -381,6 +451,10 @@ public class Experiment2_2 extends AppCompatActivity {
             //rcount = rcount + 1;
         }
         numstimuli = count;
+
+        for (int i = 0; i < numstimuli; i++)    {
+            mLogger.WriteArray(stimuli[i], false, true);
+        }
     }
     private String getCorrectFeedbackanswer()   {
         String value = "";

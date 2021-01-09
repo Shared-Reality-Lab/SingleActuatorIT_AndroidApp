@@ -37,11 +37,11 @@ public class AudioVibDriveStatic extends AudioVibDrive {
 		int noteperbar = 8;
 		int notesize = (int) ((p[period]) * VibAudioTrack.SAMPLE_RATE / noteperbar * 0.6);
 		int fullsize = (int) ((p[period]) * VibAudioTrack.SAMPLE_RATE / noteperbar);
-		double[] fb = {60, 120, 300, 0};
-		double[] fc = {80, 120, 300, 0};
+		double[] fb = {60, 160, 320, 0};
+		double[] fc = {80, 160, 360, 0};
 
 		//equalizing perceived intensity
-		double[] weight_amp = {0.3, 0.25, 0.6, 0};
+		double[] weight_amp = {0.3, 0.3, 0.5, 0};
 		double tamp;
 		if (amp == 1)	{
 			tamp = (double)(ampstrong/100.0) * (double)(eqstrong[freq]/50.0);

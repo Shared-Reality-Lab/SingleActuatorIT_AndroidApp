@@ -97,7 +97,6 @@ public class StartActivity extends AppCompatActivity {
                 intent.putExtra("eqweak", eqweak);
                 intent.putExtra("eqstrong", eqstrong);
                 intent.putExtra("audiovolume", audiovolume);
-                intent.putExtra("audiodata", audiodata);
                 startActivityForResult(intent, request_exp2_1_Code);
             }
         });
@@ -115,7 +114,6 @@ public class StartActivity extends AppCompatActivity {
                 intent.putExtra("eqweak", eqweak);
                 intent.putExtra("eqstrong", eqstrong);
                 intent.putExtra("audiovolume", audiovolume);
-                intent.putExtra("audiodata", audiodata);
                 startActivityForResult(intent, request_exp2_2_Code);
             }
         });
@@ -171,7 +169,6 @@ public class StartActivity extends AppCompatActivity {
                 intent.putExtra("eqweak", eqweak);
                 intent.putExtra("eqstrong", eqstrong);
                 intent.putExtra("audiovolume", audiovolume);
-                intent.putExtra("audiodata", audiodata);
                 startActivityForResult(intent, request_calib_Code);
             }
         });
@@ -189,7 +186,6 @@ public class StartActivity extends AppCompatActivity {
                 intent.putExtra("eqweak", eqweak);
                 intent.putExtra("eqstrong", eqstrong);
                 intent.putExtra("audiovolume", audiovolume);
-                intent.putExtra("audiodata", audiodata);
                 startActivityForResult(intent, request_famil_Code);
             }
         });

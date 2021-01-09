@@ -106,7 +106,32 @@ public class Familization extends AppCompatActivity {
 
 
         //initial condition
+        final int SAMPLING_RATE = 12000;
+        final int LONGEST_TIME_FRAME = 4000;
+        audiodata = new short[(SAMPLING_RATE * LONGEST_TIME_FRAME / 1000)];
+        String audioFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath() + "/pinknoise_12k.wav";
+        File file = new File(audioFileName);
+        //Log.e("audioFill", "=" + file.length());
+        byte[] wavHeader = new byte[44];
+        byte[] musicBytes = new byte[2];
 
+        try {
+            FileInputStream in = new FileInputStream(audioFileName);
+            in.read(wavHeader);
+            for(int i = 0; i < SAMPLING_RATE * LONGEST_TIME_FRAME / 1000 - 1; i++) {
+                in.read(musicBytes);
+                audiodata[i] = (short) ((musicBytes[0] & 0xFF) << 8 | (musicBytes[1] & 0xFF));
+            }
+
+            //Log.e("ra", "read");
+            in.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            //Log.e ("file", e.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+            //Log.e ("file", e.toString());
+        }
         mVibDrive = new AudioVibDriveContinuous(tf);
         mVibDrive.setAudioData(audiodata);
         mVibDrive.vibVolumeChange(ampweak, ampstrong, eqweak, eqstrong);

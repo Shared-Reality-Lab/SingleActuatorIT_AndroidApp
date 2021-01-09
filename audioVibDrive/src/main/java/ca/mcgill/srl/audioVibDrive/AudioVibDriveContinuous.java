@@ -41,11 +41,11 @@ public class AudioVibDriveContinuous extends AudioVibDrive implements Runnable {
 
 	//Custom function for generate Vibrations for Experiments.
 	private void generateVibSignal(int freq, int amp) {
-		double[] fb = {50, 120, 300};
-		double[] fc = {70, 120, 300};
+		double[] fb = {60, 160, 320};
+		double[] fc = {80, 160, 360};
 
 		//equalizing perceived intensity
-		double[] weight_amp = {0.11, 0.12, 0.35};
+		double[] weight_amp = {0.3, 0.3, 0.5, 0};
 		double cAmp = convertAmp((amp/100.0) * weight_amp[freq]);
 
 
@@ -64,11 +64,11 @@ public class AudioVibDriveContinuous extends AudioVibDrive implements Runnable {
 		int notesize = (int) (mFrameSize / noteperbar * 0.6);
 		//Log.e ("framesize", Integer.toString(mFrameSize));
 		//Log.e ("notesize", Integer.toString(notesize));
-		double[] fb = {60, 120, 300, 0};
-		double[] fc = {80, 120, 300, 0};
+		double[] fb = {60, 160, 320, 0};
+		double[] fc = {80, 160, 360, 0};
 
 		//equalizing perceived intensity
-		double[] weight_amp = {0.3, 0.25, 0.6, 0};
+		double[] weight_amp = {0.3, 0.3, 0.5, 0};
 		double tamp;
 		if(freq == 3) tamp = 0;
 		else if (amp == 1)	{
@@ -99,6 +99,7 @@ public class AudioVibDriveContinuous extends AudioVibDrive implements Runnable {
 	}
 
 	public void stop() {
+
 		mIsRun = false;
 	}
 	//filling audio data into a single channel, length of "mFramesize"
